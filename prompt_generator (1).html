@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Prompt Generator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#f0f0f0;min-height:100vh;padding:1rem}
+.step-indicator{display:flex;align-items:center;gap:8px;margin-bottom:1.5rem}
+.step-dot{width:28px;height:28px;border-radius:50%;border:1px solid #333;display:flex;align-items:center;justify-content:center;font-size:11px;color:#555;cursor:pointer;transition:all .2s;flex-shrink:0}
+.step-dot.active{background:#fff;color:#000;border-color:#fff}
+.step-dot.done{background:#1a1a1a;border-color:#444;color:#666}
+.step-dot.done::after{content:'✓';font-size:10px}
+.step-line{flex:1;height:1px;background:#1a1a1a}
+.step-line.done{background:#333}
+.step-label{font-size:11px;color:#444}
+.step-label.active{color:#fff}
+.step-labels{display:flex;justify-content:space-between;margin-bottom:1.5rem;margin-top:-1rem}
+.step-labels span{font-size:10px;color:#444;text-align:center;width:60px}
+.step-labels span.active{color:#888}
+
+.sec{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin:1.25rem 0 8px;display:flex;justify-content:space-between;align-items:center}
+.sec-clear{font-size:10px;color:#333;cursor:pointer;text-decoration:underline}
+.sec-clear:hover{color:#666}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{padding:5px 11px;border-radius:20px;border:1px solid #1e1e1e;font-size:11px;cursor:pointer;background:#111;color:#888;transition:all .15s;user-select:none}
+.chip:hover{border-color:#444;color:#ddd}
+.chip.active{background:#fff;color:#000;border-color:#fff}
+
+.realism-box{background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:1rem;margin-top:1.25rem}
+.realism-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.realism-title{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.1em}
+.realism-value{font-size:12px;color:#fff;font-weight:500}
+.realism-labels{display:flex;justify-content:space-between;font-size:10px;color:#333;margin-top:6px}
+input[type=range]{width:100%;accent-color:#fff;cursor:pointer}
+
+.divider{height:1px;background:#1a1a1a;margin:1.25rem 0}
+
+.out{margin-top:1.25rem;background:#111;border-radius:12px;border:1px solid #1e1e1e;padding:1rem;display:none}
+.out-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.out-text{font-size:12px;color:#ddd;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1.25rem}
+.btn{padding:11px;border-radius:10px;border:1px solid #222;font-size:13px;cursor:pointer;background:#111;color:#888;transition:all .15s}
+.btn:hover{border-color:#444;color:#fff}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:#fff;color:#000;border-color:#fff;font-weight:500}
+.btn.primary:hover{background:#eee}
+.btn.accent{background:#111;color:#fff;border-color:#444;grid-column:1/-1}
+.btn.accent:hover{background:#1a1a1a;border-color:#666}
+
+.copy-btn{margin-top:10px;padding:8px 16px;border-radius:8px;border:1px solid #222;font-size:12px;cursor:pointer;background:#0a0a0a;color:#666;width:100%;transition:all .15s}
+.copy-btn:hover{border-color:#444;color:#fff}
+.copied{font-size:11px;color:#444;margin-top:6px;min-height:14px;text-align:center}
+
+.animate-next{display:none;margin-top:1rem;padding:1rem;background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px}
+.animate-next p{font-size:12px;color:#5a8a5a;line-height:1.6;margin-bottom:12px}
+.animate-next strong{color:#8aba8a}
+
+.kling-section{display:none}
+.kling-header{background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:1rem;margin-bottom:1rem}
+.kling-header p{font-size:12px;color:#666;line-height:1.6}
+.kling-header strong{color:#aaa}
+.current-settings{font-size:11px;color:#444;margin-top:8px;line-height:1.8}
+.current-settings span{color:#666}
+
+.combo-count{font-size:10px;color:#2a2a2a;margin-top:6px}
+</style>
+</head>
+<body>
+
+<div style="padding:1rem 0 0">
+
+<div class="step-indicator">
+  <div class="step-dot active" id="dot1" onclick="goStep(1)">1</div>
+  <div class="step-line" id="line1"></div>
+  <div class="step-dot" id="dot2" onclick="goStep(2)">2</div>
+  <div class="step-line" id="line2"></div>
+  <div class="step-dot" id="dot3" onclick="goStep(3)">3</div>
+</div>
+<div class="step-labels">
+  <span class="active" id="lbl1">Build prompt</span>
+  <span id="lbl2">Generate photo</span>
+  <span id="lbl3">Animate it</span>
+</div>
+
+<!-- STEP 1: BUILD PROMPT -->
+<div id="step1">
+
+<div class="sec"><span>Car</span><span class="sec-clear" onclick="clearKey('car')">clear</span></div>
+<div class="chips" id="car-chips"></div>
+
+<div class="sec"><span>Finish</span><span class="sec-clear" onclick="clearKey('finish')">clear</span></div>
+<div class="chips" id="finish-chips"></div>
+
+<div class="sec"><span>Scene</span><span class="sec-clear" onclick="clearKey('scene')">clear</span></div>
+<div class="chips" id="scene-chips"></div>
+
+<div class="sec"><span>Camera angle</span><span class="sec-clear" onclick="clearKey('angle')">clear</span></div>
+<div class="chips" id="angle-chips"></div>
+
+<div class="sec"><span>Mood</span><span class="sec-clear" onclick="clearKey('mood')">clear</span></div>
+<div class="chips" id="mood-chips"></div>
+
+<div class="sec"><span>Detail</span><span class="sec-clear" onclick="clearKey('detail')">clear</span></div>
+<div class="chips" id="detail-chips"></div>
+
+<div class="sec"><span>Weather</span><span class="sec-clear" onclick="clearKey('weather')">clear</span></div>
+<div class="chips" id="weather-chips"></div>
+
+<div class="sec"><span>Time of day</span><span class="sec-clear" onclick="clearKey('time')">clear</span></div>
+<div class="chips" id="time-chips"></div>
+
+<div class="realism-box">
+  <div class="realism-header">
+    <span class="realism-title">Realism level</span>
+    <span class="realism-value" id="realism-label">Street Photo</span>
+  </div>
+  <input type="range" min="0" max="3" value="1" step="1" id="realism-slider" oninput="updateRealismLabel()">
+  <div class="realism-labels">
+    <span>Street</span><span>Raw</span><span>Ultra</span><span>Hyper Real</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+<div class="combo-count" id="combo-count"></div>
+
+<div class="btn-row">
+  <button class="btn" onclick="randomize()">&#8635; Randomize</button>
+  <button class="btn primary" onclick="generateMJ()">&#10024; Generate</button>
+</div>
+
+<div class="out" id="mj-out">
+  <div class="out-label">Midjourney prompt</div>
+  <div class="out-text" id="mj-text"></div>
+  <button class="copy-btn" onclick="copyText('mj-text','mj-copied')">Copy prompt</button>
+  <div class="copied" id="mj-copied"></div>
+  <div class="animate-next" id="animate-next">
+    <p>&#x2714;&#xfe0f; Prompt ready. Go generate your photo in Midjourney, then come back here to animate it — <strong>your settings are saved.</strong></p>
+    <button class="btn accent" onclick="goStep(3)">&#9654; I have my photo — animate it now</button>
+  </div>
+</div>
+
+</div>
+
+<!-- STEP 2: PLACEHOLDER -->
+<div id="step2" style="display:none">
+  <div style="padding:2rem 0;text-align:center">
+    <p style="font-size:14px;color:#666;margin-bottom:8px">Go generate your photo in Midjourney</p>
+    <p style="font-size:12px;color:#333;margin-bottom:1.5rem">Copy the prompt from Step 1, paste it into Midjourney, pick the best result.</p>
+    <button class="btn accent" onclick="goStep(3)" style="max-width:280px;margin:0 auto">&#9654; Done — animate my photo</button>
+    <br><br>
+    <button class="btn" onclick="goStep(1)" style="max-width:280px;margin:0 auto;font-size:12px">&#8592; Back to edit prompt</button>
+  </div>
+</div>
+
+<!-- STEP 3: ANIMATE -->
+<div id="step3" style="display:none">
+
+<div class="kling-header">
+  <p>Upload your Midjourney photo to <strong>Kling → Image-to-Video</strong>, then use this prompt for camera movement.</p>
+  <div class="current-settings" id="current-settings"></div>
+</div>
+
+<div class="sec"><span>Camera move</span><span class="sec-clear" onclick="clearAKey('amove')">clear</span></div>
+<div class="chips" id="amove-chips"></div>
+
+<div class="sec"><span>Cut to</span><span class="sec-clear" onclick="clearAKey('acut')">clear</span></div>
+<div class="chips" id="acut-chips"></div>
+
+<div class="sec"><span>Atmosphere</span><span class="sec-clear" onclick="clearAKey('aatmo')">clear</span></div>
+<div class="chips" id="aatmo-chips"></div>
+
+<div class="sec"><span>Speed</span><span class="sec-clear" onclick="clearAKey('aspeed')">clear</span></div>
+<div class="chips" id="aspeed-chips"></div>
+
+<div class="divider"></div>
+
+<div class="btn-row">
+  <button class="btn" onclick="arandomize()">&#8635; Randomize</button>
+  <button class="btn primary" onclick="agenerate()">&#10024; Generate</button>
+</div>
+
+<div class="out" id="animate-out">
+  <div class="out-label">Kling prompt — animate your photo</div>
+  <div class="out-text" id="animate-text"></div>
+  <button class="copy-btn" onclick="copyText('animate-text','animate-copied')">Copy prompt</button>
+  <div class="copied" id="animate-copied"></div>
+  <div style="margin-top:12px">
+    <button class="btn" style="width:100%;font-size:12px" onclick="goStep(1)">&#8592; Back to Midjourney — make a new photo</button>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+const DATA={
+  car:["BMW E60 M5","BMW E39 M5","BMW E92 M3","BMW F10 M5","BMW F90 M5 Competition","BMW G80 M3 Competition","BMW E63 M6","BMW E46 M3","BMW M2 F87","BMW M4 F82","BMW M4 G82","BMW E34 M5","BMW E28 M5","BMW 7 Series E38","BMW M3 Touring G81","Mercedes E63 AMG W212","Mercedes C63 AMG W204","Mercedes C63 AMG W205","Mercedes S63 AMG W221","Mercedes CLS63 AMG","Mercedes E55 AMG W211","Mercedes G63 AMG W463","Mercedes GT63 AMG","Audi RS6 C7 Avant","Audi RS6 C8 Avant","Audi RS4 B8","Audi RS4 B7","Audi S5 B8 Coupe","Audi RS7 C7","Audi RS3 8V","Audi S8 D4","Porsche Panamera 970","Porsche Cayenne Turbo 958","Porsche 911 Turbo S 992","Dodge Charger SRT Hellcat","Dodge Challenger SRT Hellcat","Nissan GT-R R35","Toyota Supra A90","Toyota Supra A80","Lexus IS-F","Lexus GS-F","Jaguar XFR","Alfa Romeo Giulia Quadrifoglio","Maserati Ghibli Trofeo","Cadillac CTS-V","Chevrolet Camaro ZL1","Ford Mustang GT500 Shelby","Subaru WRX STI","Mitsubishi Lancer Evo X","Mazda RX-7 FD","Honda NSX NA1","Volvo V90 T8","Tesla Model S Plaid","BMW i5 M60","Audi RS e-tron GT"],
+  finish:["gloss black","matte black","satin black","carbon black wrap","deep midnight blue","dark navy gloss","matte army green","dark gunmetal grey","satin dark bronze","murdered-out all black","gloss anthracite","matte dark red","deep forest green","satin midnight purple","gloss obsidian","two-tone black and carbon","chrome delete all black","matte charcoal","dark olive drab","stealth grey matte","satin graphite"],
+  scene:["wet urban highway at night","dense foggy highway at dawn","underground parking garage","highway tunnel with orange lighting","elevated city interchange at dusk","rain-soaked city street at night","industrial zone at early dawn","mountain road in heavy fog","bridge crossing at night","gas station canopy at night","empty highway under overpass","wet cobblestone street in city center","highway at golden hour","suburban street after heavy rain","forest road at night","autobahn at high speed","flooded underpass at night","multi-level parking structure","rooftop parking at night","narrow alley in old city district","coastal highway at sunset","abandoned warehouse district","airport service road at night","highway on-ramp at speed","snow-dusted mountain pass","gravel road through pine forest","city ring road at 3am","port terminal at night","rain-soaked motorway interchange"],
+  angle:["extreme low side angle at wheel level","low trailing angle from behind","low front three-quarter angle","shot from inside chase car through windshield","ground level dead center between two cars","tight close-up on wheel and caliper","low angle from road surface","wide side profile tracking shot","rear bumper and exhaust close-up","front grille and badge close-up","overhead looking down on roof","shot through rain-covered windshield","extreme wide angle from roadside","tight on driver silhouette through glass","worm's eye view from pavement","tight on side mirror reflection","inside tunnel looking out toward exit","low angle under front splitter"],
+  mood:["aggressive and cinematic","dark and atmospheric","raw and candid","cold and moody","warm golden hour glow","gritty urban night","cinematic slow burn","hyper-realistic street photography","mysterious and threatening","tense and urgent","melancholic night drive","lone wolf energy","underground scene aesthetic","noir city night","post-rain calm tension","early morning solitude","industrial brutalism","eastern european street energy","late night highway solitude","menacing and powerful"],
+  detail:["red brake calipers","yellow ceramic brake calipers","orange brake calipers","blue brake calipers","dark forged wheels","dark magnesium wheels","carbon vented hood","wide body aero kit","deep front splitter","carbon diffuser","smoked taillights","aftermarket exhaust tips","rain droplets on paint","wet reflections on asphalt","no license plate","carbon fiber roof","tinted rear lights","aftermarket side skirts","lowered suspension","stretched tires","fender flares","hood pins","blacked out badges","carbon side mirrors","custom wide arch kit","staggered fitment wheels","titanium exhaust tips","brake dust on wheel spokes","micro scratches on paint surface","stone chips on front bumper"],
+  weather:["heavy rain","light drizzle","dense fog","light morning mist","overcast sky","clear night sky","light snow dusting","wet roads after rain stopped","dry summer heat haze","storm approaching","freezing drizzle","thick low fog","scattered puddles on road","damp air with ground mist"],
+  time:["3am dead of night","late night 1am","midnight","early dawn 5am","blue hour before sunrise","golden hour sunset","dusk last light","overcast grey afternoon","deep night no moon","twilight","2am empty streets","pre-dawn darkness"]
+};
+
+const REALISM=[
+  {label:"Street Photo",tags:"Hyper-realistic candid raw handheld photo shot on an iPhone 15 Pro Max"},
+  {label:"Raw & Gritty",tags:"Hyper-realistic candid raw handheld photo shot on an iPhone 15 Pro Max, natural lens distortion, authentic phone compression artifacts, imperfect handheld shake"},
+  {label:"Ultra Realistic",tags:"Hyper-realistic street photograph shot on a Canon EOS R5 with 85mm f/1.4 lens, shallow depth of field, natural bokeh, slight chromatic aberration on edges, RAW file unedited"},
+  {label:"Hyper Real",tags:"Hyper-realistic street photograph shot on a Canon EOS R5 with 85mm f/1.4 lens, shallow depth of field, natural bokeh, slight chromatic aberration, visible lens dust particles, micro scratches on paint, brake dust on wheel spokes, authentic film grain, RAW file straight from camera, zero post-processing, imperfect real-world lighting, photojournalism quality"}
+];
+
+const ANIMATE={
+  amove:["camera pushes forward chasing the car","camera tracks alongside at matching speed","camera creeps forward from behind toward the car","camera starts tight on rear wheel then pulls back to reveal full car","camera rises slowly from ground level to mid shot","camera drifts alongside the door panel toward the front","camera pushes in tight on the grille then pulls back wide","camera slides low along front bumper then tilts up to roofline","camera tracks tight on exhaust tips then pulls back","camera pushes forward along wet road surface toward the car","camera slowly circles from low angle","camera creeps through rain-covered windshield of chase car"],
+  acut:["cut to tight close-up of spinning wheel and brake caliper","cut to driver silhouette barely visible through tinted glass","cut to rear diffuser and exhaust tips at speed","cut to wide shot revealing the full scene","cut to extreme close-up of rain droplets on glossy paint","cut to front grille and headlights cutting through atmosphere","cut to road surface and tire contact patch","cut to interior through rain-covered side window","cut to wide low angle as car pulls ahead"],
+  aatmo:["wet asphalt reflections ripple as car passes","orange street lights bleed across glossy paint","rain droplets streak across the lens","red brake glow bleeds into puddles","fog curls around the bumper and wheels","tunnel lights blur into streaks overhead","exhaust vapour rises slowly in cold air","motion blur streaks the background","wet tire spray fans off rear wheels","headlights cut sharp beams through darkness"],
+  aspeed:["slow and cinematic, almost still","gradual gentle movement","medium pace, controlled","urgent and fast","aggressive high speed"]
+};
+
+const state={car:null,finish:null,scene:null,angle:null,mood:null,detail:null,weather:null,time:null};
+const astate={amove:null,acut:null,aatmo:null,aspeed:null};
+let lastGenerated={car:'',finish:'',scene:'',weather:'',time:''};
+
+function goStep(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById('step'+i).style.display=i===n?'block':'none';
+    const dot=document.getElementById('dot'+i);
+    dot.classList.remove('active','done');
+    if(i===n) dot.classList.add('active');
+    else if(i<n) dot.classList.add('done');
+    const lbl=document.getElementById('lbl'+i);
+    lbl.classList.toggle('active',i===n);
+  });
+  [1,2].forEach(i=>{
+    const line=document.getElementById('line'+i);
+    line.classList.toggle('done',i<n);
+  });
+  if(n===3) updateKlingHeader();
+}
+
+function updateKlingHeader(){
+  const el=document.getElementById('current-settings');
+  if(lastGenerated.car){
+    el.innerHTML=`<span>Car:</span> ${lastGenerated.car} &nbsp;·&nbsp; <span>Scene:</span> ${lastGenerated.scene} &nbsp;·&nbsp; <span>Weather:</span> ${lastGenerated.weather} &nbsp;·&nbsp; <span>Time:</span> ${lastGenerated.time}`;
+  }
+}
+
+function makeChips(cid,key,items,st){
+  const el=document.getElementById(cid);
+  if(!el)return;
+  el.innerHTML='';
+  items.forEach(item=>{
+    const d=document.createElement('div');
+    d.className='chip'+(st[key]===item?' active':'');
+    d.textContent=item;
+    d.onclick=()=>{st[key]=st[key]===item?null:item;makeChips(cid,key,items,st);updateCount();};
+    el.appendChild(d);
+  });
+}
+
+function updateCount(){
+  const total=Object.values(DATA).reduce((a,b)=>a*b.length,1);
+  const el=document.getElementById('combo-count');
+  if(el) el.textContent=total.toLocaleString()+' possible combinations';
+}
+
+function updateRealismLabel(){
+  const v=parseInt(document.getElementById('realism-slider').value);
+  document.getElementById('realism-label').textContent=REALISM[v].label;
+}
+
+function initMJ(){
+  makeChips('car-chips','car',DATA.car,state);
+  makeChips('finish-chips','finish',DATA.finish,state);
+  makeChips('scene-chips','scene',DATA.scene,state);
+  makeChips('angle-chips','angle',DATA.angle,state);
+  makeChips('mood-chips','mood',DATA.mood,state);
+  makeChips('detail-chips','detail',DATA.detail,state);
+  makeChips('weather-chips','weather',DATA.weather,state);
+  makeChips('time-chips','time',DATA.time,state);
+  updateCount();
+}
+
+function initAnimate(){
+  makeChips('amove-chips','amove',ANIMATE.amove,astate);
+  makeChips('acut-chips','acut',ANIMATE.acut,astate);
+  makeChips('aatmo-chips','aatmo',ANIMATE.aatmo,astate);
+  makeChips('aspeed-chips','aspeed',ANIMATE.aspeed,astate);
+}
+
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function clearKey(k){state[k]=null;initMJ();}
+function clearAKey(k){astate[k]=null;initAnimate();}
+
+function randomize(){
+  Object.keys(state).forEach(k=>{state[k]=pick(DATA[k]);});
+  initMJ();generateMJ();
+}
+
+function arandomize(){
+  Object.keys(astate).forEach(k=>{astate[k]=pick(ANIMATE[k]);});
+  initAnimate();agenerate();
+}
+
+function generateMJ(){
+  const car=state.car||pick(DATA.car);
+  const finish=state.finish||pick(DATA.finish);
+  const scene=state.scene||pick(DATA.scene);
+  const angle=state.angle||pick(DATA.angle);
+  const mood=state.mood||pick(DATA.mood);
+  const detail=state.detail||pick(DATA.detail);
+  const weather=state.weather||pick(DATA.weather);
+  const time=state.time||pick(DATA.time);
+  const rv=parseInt(document.getElementById('realism-slider').value);
+  const camera=REALISM[rv].tags;
+  lastGenerated={car,finish,scene,weather,time};
+  const prompt=`${camera}, vertical orientation. A heavily modified ${finish} ${car} on a ${scene} at ${time}, ${weather}. ${angle}. ${detail}. No license plate, bracket area completely blacked out. Behind the deeply tinted windshield, a barely discernible dark silhouette of the driver — head and shoulders only. Both cars traveling in the same direction. ${mood} atmosphere. Environment and architecture reflected across the car body. --ar 9:16 --raw --stylize 0`;
+  document.getElementById('mj-text').textContent=prompt;
+  document.getElementById('mj-out').style.display='block';
+  document.getElementById('animate-next').style.display='block';
+  document.getElementById('mj-copied').textContent='';
+}
+
+function agenerate(){
+  const move=astate.amove||pick(ANIMATE.amove);
+  const cut=astate.acut||pick(ANIMATE.acut);
+  const atmo=astate.aatmo||pick(ANIMATE.aatmo);
+  const speed=astate.aspeed||pick(ANIMATE.aspeed);
+  const context=lastGenerated.car?` The car in the photo is a ${lastGenerated.finish||''} ${lastGenerated.car} on a ${lastGenerated.scene}.`:'';
+  const prompt=`${move}.${context} Movement is ${speed}. ${atmo}. ${cut}. Car moves forward at all times. No reverse motion. Camera always follows the subject — never pulls away.`;
+  document.getElementById('animate-text').textContent=prompt;
+  document.getElementById('animate-out').style.display='block';
+  document.getElementById('animate-copied').textContent='';
+}
+
+function copyText(id,fid){
+  const text=document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    document.getElementById(fid).textContent='Copied ✓';
+    setTimeout(()=>{document.getElementById(fid).textContent='';},2000);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=text;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+    document.getElementById(fid).textContent='Copied ✓';
+    setTimeout(()=>{document.getElementById(fid).textContent='';},2000);
+  });
+}
+
+initMJ();initAnimate();
+</script>
+</body>
+</html>
