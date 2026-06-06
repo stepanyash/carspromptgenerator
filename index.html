@@ -69,6 +69,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <span id="lbl3">Animate it</span>
   </div>
 
+  <!-- STEP 1 -->
   <div id="step1">
     <div class="sec"><span>Camera style</span><span class="sec-clear" onclick="clearKey('cameraStyle')">clear</span></div>
     <div class="chips" id="cameraStyle-chips"></div>
@@ -126,6 +127,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
 
+  <!-- STEP 2 -->
   <div id="step2" style="display:none">
     <div style="padding:2rem 0;text-align:center">
       <p style="font-size:14px;color:#666;margin-bottom:8px">Go generate your photo in Midjourney</p>
@@ -136,6 +138,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
 
+  <!-- STEP 3 -->
   <div id="step3" style="display:none">
     <div class="kling-header">
       <p>Upload your Midjourney photo to <strong>Kling → Image-to-Video</strong>, then use this prompt for camera movement.</p>
@@ -153,6 +156,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <div class="sec"><span>Speed</span><span class="sec-clear" onclick="clearAKey('aspeed')">clear</span></div>
     <div class="chips" id="aspeed-chips"></div>
+
+    <div class="sec"><span>Viral style</span><span class="sec-clear" onclick="clearAKey('aviral')">clear</span></div>
+    <div class="chips" id="aviral-chips"></div>
+
+    <div class="sec"><span>Hook energy</span><span class="sec-clear" onclick="clearAKey('ahook')">clear</span></div>
+    <div class="chips" id="ahook-chips"></div>
+
+    <div class="sec"><span>Loop ending</span><span class="sec-clear" onclick="clearAKey('aloop')">clear</span></div>
+    <div class="chips" id="aloop-chips"></div>
 
     <div class="divider"></div>
 
@@ -255,21 +267,70 @@ const ANIMATE = {
     "controlled medium pace",
     "urgent and fast",
     "aggressive high speed"
+  ],
+  aviral: [
+    "scroll stopper",
+    "fake candid realism",
+    "sensory speed",
+    "clean luxury motion",
+    "BTS realism"
+  ],
+  ahook: [
+    "instant impact",
+    "slow tension then hit",
+    "constant pressure",
+    "calm start big finish"
+  ],
+  aloop: [
+    "hard loop",
+    "soft loop",
+    "no loop"
   ]
 };
 
 const state = {
-  cameraStyle:null, car:null, count:null, formation:null, finish:null,
-  scene:null, angle:null, driver:null, mood:null, detail:null, weather:null, time:null
+  cameraStyle:null,
+  car:null,
+  count:null,
+  formation:null,
+  finish:null,
+  scene:null,
+  angle:null,
+  driver:null,
+  mood:null,
+  detail:null,
+  weather:null,
+  time:null
 };
 
-const astate = {amove:null, acut:null, aatmo:null, aspeed:null};
+const astate = {
+  amove:null,
+  acut:null,
+  aatmo:null,
+  aspeed:null,
+  aviral:null,
+  ahook:null,
+  aloop:null
+};
 
 let lastGenerated = {
-  cameraStyle:'', car:'', count:'', formation:'', finish:'', scene:'', angle:'', driver:'', weather:'', time:''
+  cameraStyle:'',
+  car:'',
+  count:'',
+  formation:'',
+  finish:'',
+  scene:'',
+  angle:'',
+  driver:'',
+  weather:'',
+  time:'',
+  mood:'',
+  detail:''
 };
 
-function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function pick(arr){
+  return arr[Math.floor(Math.random()*arr.length)];
+}
 
 function goStep(n){
   [1,2,3].forEach(i=>{
@@ -280,14 +341,16 @@ function goStep(n){
     else if(i<n) dot.classList.add('done');
     document.getElementById('lbl'+i).classList.toggle('active',i===n);
   });
-  [1,2].forEach(i=>document.getElementById('line'+i).classList.toggle('done',i<n));
+  [1,2].forEach(i=>{
+    document.getElementById('line'+i).classList.toggle('done',i<n);
+  });
   if(n===3) updateKlingHeader();
 }
 
 function updateKlingHeader(){
   const el=document.getElementById('current-settings');
   if(lastGenerated.car){
-    el.innerHTML=`<span>Style:</span> ${lastGenerated.cameraStyle} &nbsp;·&nbsp; <span>Car:</span> ${lastGenerated.car} &nbsp;·&nbsp; <span>Count:</span> ${lastGenerated.count} &nbsp;·&nbsp; <span>Formation:</span> ${lastGenerated.formation}`;
+    el.innerHTML=`<span>Style:</span> ${lastGenerated.cameraStyle} &nbsp;·&nbsp; <span>Car:</span> ${lastGenerated.car} &nbsp;·&nbsp; <span>Count:</span> ${lastGenerated.count} &nbsp;·&nbsp; <span>Formation:</span> ${lastGenerated.formation} &nbsp;·&nbsp; <span>Driver:</span> ${lastGenerated.driver}`;
   }
 }
 
@@ -314,8 +377,15 @@ function updateCount(){
   if(el) el.textContent=total.toLocaleString()+' possible combinations';
 }
 
-function clearKey(k){ state[k]=null; initMJ(); }
-function clearAKey(k){ astate[k]=null; initAnimate(); }
+function clearKey(k){
+  state[k]=null;
+  initMJ();
+}
+
+function clearAKey(k){
+  astate[k]=null;
+  initAnimate();
+}
 
 function initMJ(){
   makeChips('cameraStyle-chips','cameraStyle',DATA.cameraStyle,state);
@@ -338,17 +408,26 @@ function initAnimate(){
   makeChips('acut-chips','acut',ANIMATE.acut,astate);
   makeChips('aatmo-chips','aatmo',ANIMATE.aatmo,astate);
   makeChips('aspeed-chips','aspeed',ANIMATE.aspeed,astate);
+  makeChips('aviral-chips','aviral',ANIMATE.aviral,astate);
+  makeChips('ahook-chips','ahook',ANIMATE.ahook,astate);
+  makeChips('aloop-chips','aloop',ANIMATE.aloop,astate);
 }
 
 function randomize(){
-  Object.keys(state).forEach(k=>state[k]=pick(DATA[k]));
-  if(state.count==="1 car") state.formation="side by side";
+  Object.keys(state).forEach(k=>{
+    state[k]=pick(DATA[k]);
+  });
+  if(state.count==="1 car"){
+    state.formation="side by side";
+  }
   initMJ();
   generateMJ();
 }
 
 function arandomize(){
-  Object.keys(astate).forEach(k=>astate[k]=pick(ANIMATE[k]));
+  Object.keys(astate).forEach(k=>{
+    astate[k]=pick(ANIMATE[k]);
+  });
   initAnimate();
   agenerate();
 }
@@ -388,9 +467,6 @@ function formationText(count, finish, car, formation){
 }
 
 function foregroundText(count, finish, car, detail){
-  if(count==="1 car"){
-    return `Foreground is a heavily modified ${car} in ${finish} with ${detail}.`;
-  }
   return `Foreground is a heavily modified ${car} in ${finish} with ${detail}.`;
 }
 
@@ -439,7 +515,7 @@ function lightText(time, finish){
   if(time==="golden hour" || time==="dusk" || time==="sunrise"){
     return `Realistic glare from the low sun on the ${finish} paint.`;
   }
-  if(time==="night" || time==="late evening"){
+  if(time==="night" || time==="late evening" || time==="blue hour"){
     return `Realistic reflections from street lights on the ${finish} paint.`;
   }
   return `Natural realistic reflections on the ${finish} paint.`;
@@ -465,6 +541,45 @@ function textureText(style){
   return "Crisp optical detail, realistic reflections, subtle natural grain, unedited RAW look. No editing.";
 }
 
+function viralStyleText(v){
+  if(v==="scroll stopper"){
+    return "The first frame must be the strongest visual moment, instantly striking, attention-grabbing, and highly believable.";
+  }
+  if(v==="fake candid realism"){
+    return "The video should feel like an accidental real phone capture, not a polished ad, with believable handheld energy and natural imperfections.";
+  }
+  if(v==="sensory speed"){
+    return "Emphasize sensory realism: tire spray, reflections, glare, motion blur, road texture, and the physical weight of speed.";
+  }
+  if(v==="clean luxury motion"){
+    return "Motion should feel expensive, smooth, controlled, and premium, with clean camera movement and elegant realism.";
+  }
+  return "The video should feel behind-the-scenes and real, like unfiltered authentic footage captured in the moment.";
+}
+
+function hookText(h){
+  if(h==="instant impact"){
+    return "Open with immediate motion and visual tension in the first second, no slow intro.";
+  }
+  if(h==="slow tension then hit"){
+    return "Begin with subtle tension, then deliver a stronger speed or camera beat after a brief buildup.";
+  }
+  if(h==="constant pressure"){
+    return "Maintain continuous momentum and visual pressure from beginning to end.";
+  }
+  return "Start calm and grounded, then finish with a stronger visual payoff.";
+}
+
+function loopText(l){
+  if(l==="hard loop"){
+    return "End in a way that visually loops back into the first frame for seamless replay.";
+  }
+  if(l==="soft loop"){
+    return "End with a smooth visual rhythm that encourages replay without an obvious cut.";
+  }
+  return "End cleanly with no loop effect.";
+}
+
 function generateMJ(){
   const cameraStyle = state.cameraStyle || pick(DATA.cameraStyle);
   const car = state.car || pick(DATA.car);
@@ -479,7 +594,9 @@ function generateMJ(){
   const weather = state.weather || pick(DATA.weather);
   const time = state.time || pick(DATA.time);
 
-  lastGenerated={cameraStyle,car,count,formation,finish,scene,angle,driver,weather,time};
+  lastGenerated = {
+    cameraStyle, car, count, formation, finish, scene, angle, driver, weather, time, mood, detail
+  };
 
   const prompt = [
     cameraStyleText(cameraStyle),
@@ -502,17 +619,23 @@ function generateMJ(){
 }
 
 function agenerate(){
-  const move=astate.amove||pick(ANIMATE.amove);
-  const cut=astate.acut||pick(ANIMATE.acut);
-  const atmo=astate.aatmo||pick(ANIMATE.aatmo);
-  const speed=astate.aspeed||pick(ANIMATE.aspeed);
-  const context=lastGenerated.car
-    ? ` The photo shows a ${lastGenerated.finish} ${lastGenerated.car} in ${lastGenerated.scene}. Driver setting: ${lastGenerated.driver}.`
+  const move = astate.amove || pick(ANIMATE.amove);
+  const cut = astate.acut || pick(ANIMATE.acut);
+  const atmo = astate.aatmo || pick(ANIMATE.aatmo);
+  const speed = astate.aspeed || pick(ANIMATE.aspeed);
+  const viral = astate.aviral || pick(ANIMATE.aviral);
+  const hook = astate.ahook || pick(ANIMATE.ahook);
+  const loop = astate.aloop || pick(ANIMATE.aloop);
+
+  const context = lastGenerated.car
+    ? `The base image shows a ${lastGenerated.finish} ${lastGenerated.car} in ${lastGenerated.scene}. Driver setting: ${lastGenerated.driver}.`
     : '';
-  const prompt=`${move}.${context} Movement is ${speed}. ${atmo}. ${cut}. Vehicle always moves forward. Camera follows the subject continuously. Maintain realistic automotive footage, natural weight, and believable motion.`;
-  document.getElementById('animate-text').textContent=prompt;
-  document.getElementById('animate-out').style.display='block';
-  document.getElementById('animate-copied').textContent='';
+
+  const prompt = `${context} ${move}. Movement is ${speed}. ${atmo}. ${cut}. ${viralStyleText(viral)} ${hookText(hook)} ${loopText(loop)} Keep the vehicle physically realistic and heavy, with believable traction, natural reflections, real camera behavior, and no rubbery distortion. The camera must follow the subject in a way that feels native to viral vertical TikTok footage. Vehicle always moves forward. No reverse motion, no surreal morphing, no fake CGI look.`;
+
+  document.getElementById('animate-text').textContent = prompt;
+  document.getElementById('animate-out').style.display = 'block';
+  document.getElementById('animate-copied').textContent = '';
 }
 
 function copyText(id,fid){
