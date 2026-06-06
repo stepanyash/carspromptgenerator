@@ -26,13 +26,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .chip:hover{border-color:#444;color:#ddd}
 .chip.active{background:#fff;color:#000;border-color:#fff}
 
-.realism-box{background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:1rem;margin-top:1.25rem}
-.realism-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.realism-title{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.1em}
-.realism-value{font-size:12px;color:#fff;font-weight:500}
-.realism-labels{display:flex;justify-content:space-between;font-size:10px;color:#333;margin-top:6px}
-input[type=range]{width:100%;accent-color:#fff;cursor:pointer}
-
 .divider{height:1px;background:#1a1a1a;margin:1.25rem 0}
 .out{margin-top:1.25rem;background:#111;border-radius:12px;border:1px solid #1e1e1e;padding:1rem;display:none}
 .out-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
@@ -69,6 +62,7 @@ input[type=range]{width:100%;accent-color:#fff;cursor:pointer}
     <div class="step-line" id="line2"></div>
     <div class="step-dot" id="dot3" onclick="goStep(3)">3</div>
   </div>
+
   <div class="step-labels">
     <span class="active" id="lbl1">Build prompt</span>
     <span id="lbl2">Generate photo</span>
@@ -76,11 +70,17 @@ input[type=range]{width:100%;accent-color:#fff;cursor:pointer}
   </div>
 
   <div id="step1">
+    <div class="sec"><span>Camera style</span><span class="sec-clear" onclick="clearKey('cameraStyle')">clear</span></div>
+    <div class="chips" id="cameraStyle-chips"></div>
+
     <div class="sec"><span>Car</span><span class="sec-clear" onclick="clearKey('car')">clear</span></div>
     <div class="chips" id="car-chips"></div>
 
     <div class="sec"><span>Car count</span><span class="sec-clear" onclick="clearKey('count')">clear</span></div>
     <div class="chips" id="count-chips"></div>
+
+    <div class="sec"><span>Formation</span><span class="sec-clear" onclick="clearKey('formation')">clear</span></div>
+    <div class="chips" id="formation-chips"></div>
 
     <div class="sec"><span>Finish</span><span class="sec-clear" onclick="clearKey('finish')">clear</span></div>
     <div class="chips" id="finish-chips"></div>
@@ -105,17 +105,6 @@ input[type=range]{width:100%;accent-color:#fff;cursor:pointer}
 
     <div class="sec"><span>Time of day</span><span class="sec-clear" onclick="clearKey('time')">clear</span></div>
     <div class="chips" id="time-chips"></div>
-
-    <div class="realism-box">
-      <div class="realism-header">
-        <span class="realism-title">Realism level</span>
-        <span class="realism-value" id="realism-label">Street Photo</span>
-      </div>
-      <input type="range" min="0" max="3" value="2" step="1" id="realism-slider" oninput="updateRealismLabel()">
-      <div class="realism-labels">
-        <span>Street</span><span>Raw</span><span>Ultra</span><span>Hyper Real</span>
-      </div>
-    </div>
 
     <div class="divider"></div>
     <div class="combo-count" id="combo-count"></div>
@@ -185,125 +174,102 @@ input[type=range]{width:100%;accent-color:#fff;cursor:pointer}
 </div>
 
 <script>
-const DATA={
-  car:[
-    "BMW E60 M5","BMW E39 M5","BMW E92 M3","BMW F10 M5","BMW F90 M5 Competition","BMW G80 M3 Competition","BMW E63 M6","BMW E46 M3","BMW M2 F87","BMW M4 F82","BMW M4 G82","BMW E34 M5","BMW E28 M5","BMW 7 Series E38","BMW M3 Touring G81",
-    "BMW X5 M Competition F95","BMW X6 M Competition F96",
-    "Mercedes E63 AMG W212","Mercedes C63 AMG W204","Mercedes C63 AMG W205","Mercedes S63 AMG W221","Mercedes CLS63 AMG","Mercedes E55 AMG W211","Mercedes G63 AMG W463","Mercedes GT63 AMG","Mercedes AMG GT Black Series",
-    "Audi RS6 C7 Avant","Audi RS6 C8 Avant","Audi RS4 B8","Audi RS4 B7","Audi S5 B8 Coupe","Audi RS7 C7","Audi RS3 8V","Audi S8 D4","Audi SQ8","Audi R8 V10",
-    "Porsche Panamera 970","Porsche Cayenne Turbo 958","Porsche Cayenne Turbo GT","Porsche 911 Turbo S 992",
-    "Toyota Land Cruiser 300 GR Sport","Toyota Supra A90","Toyota Supra A80",
-    "Lexus LX 600 F Sport","Lexus IS-F","Lexus GS-F",
-    "Dodge Charger SRT Hellcat","Dodge Challenger SRT Hellcat","Jeep Grand Cherokee Trackhawk","Ram 1500 TRX","Ford F-150 Raptor R",
-    "Nissan GT-R R35","Cadillac CTS-V","Cadillac Escalade-V","Chevrolet Camaro ZL1","Ford Mustang GT500 Shelby",
-    "Land Rover Defender 110 V8","Range Rover Sport SV","Lamborghini Urus","Maserati Ghibli Trofeo",
-    "Jaguar XFR","Alfa Romeo Giulia Quadrifoglio","Subaru WRX STI","Mitsubishi Lancer Evo X","Mazda RX-7 FD","Honda NSX NA1",
-    "Volvo V90 T8","Tesla Model S Plaid","BMW i5 M60","Audi RS e-tron GT"
+const DATA = {
+  cameraStyle: ["iPhone candid","DSLR street","DSLR hyper clean"],
+  car: [
+    "BMW G80 M3","BMW F90 M5","BMW E60 M5","BMW E92 M3","BMW M4 G82","BMW M3 Touring G81",
+    "BMW X5 M Competition","BMW X6 M Competition",
+    "Mercedes C63 AMG W204","Mercedes E63 AMG W212","Mercedes G63 AMG","Mercedes AMG GT Black Series",
+    "Audi RS6 C8 Avant","Audi RS7 C7","Audi R8 V10","Audi SQ8",
+    "Porsche 911 Turbo S 992","Porsche Cayenne Turbo GT","Porsche Panamera 970",
+    "Toyota Land Cruiser 300 GR Sport","Toyota Supra A90",
+    "Dodge Charger SRT Hellcat","Jeep Grand Cherokee Trackhawk","Ram 1500 TRX","Ford F-150 Raptor R",
+    "Cadillac Escalade-V","Lamborghini Urus","Range Rover Sport SV","Land Rover Defender 110 V8",
+    "Nissan GT-R R35","Chevrolet Camaro ZL1","Ford Mustang GT500 Shelby"
   ],
-  count:["1 car","2 cars","3 cars"],
-  finish:[
-    "gloss black","matte black","satin black","carbon black wrap","deep midnight blue","dark navy gloss","matte army green","dark gunmetal grey","satin dark bronze","murdered-out all black","gloss anthracite","matte dark red","deep forest green","satin midnight purple","gloss obsidian","two-tone black and carbon","chrome delete all black","matte charcoal","dark olive drab","stealth grey matte","satin graphite"
+  count: ["1 car","2 cars","3 cars"],
+  formation: ["side by side","staggered","one behind another"],
+  finish: [
+    "gloss black","satin black","matte black","murdered-out black","dark exposed carbon fiber","deep midnight blue","dark gunmetal grey","gloss anthracite","stealth grey matte","deep forest green"
   ],
-  scene:[
-    "wet urban highway at night","dense foggy highway at dawn","underground parking garage","highway tunnel with orange lighting","elevated city interchange at dusk","rain-soaked city street at night","industrial zone at early dawn","mountain road in heavy fog","bridge crossing at night","gas station canopy at night","empty highway under overpass","wet cobblestone street in city center","highway at golden hour","suburban street after heavy rain","forest road at night","autobahn at high speed","flooded underpass at night","multi-level parking structure","rooftop parking at night","narrow alley in old city district","coastal highway at sunset","abandoned warehouse district","airport service road at night","highway on-ramp at speed","snow-dusted mountain pass","gravel road through pine forest","city ring road at 3am","port terminal at night","rain-soaked motorway interchange"
+  scene: [
+    "highway at dusk","wet urban highway at night","rain-soaked city street at night","mountain road at dawn","motorway under overpass","highway tunnel with orange lighting","bridge crossing at sunset","empty ring road at night","industrial road at early dawn","coastal highway at sunset"
   ],
-  angle:[
+  angle: [
+    "close-up action shot",
     "low front three-quarter angle",
     "front head-on low angle",
+    "tight side tracking shot",
     "wide side profile tracking shot",
-    "extreme low side angle at wheel level",
-    "ground level dead center between two cars",
-    "low angle from road surface",
-    "shot from inside chase car through windshield",
-    "tight close-up on wheel and caliper",
-    "front grille and badge close-up",
-    "rear dead-center tracking shot",
-    "low trailing angle from behind",
     "rear three-quarter low angle",
-    "high rear three-quarter angle",
-    "rear bumper and exhaust close-up",
-    "shot from behind through rain-covered rear glass of chase car",
-    "direct rear view from another moving car",
-    "rear view with taillights dominating the frame",
-    "worm's eye rear angle from pavement",
-    "overhead rear three-quarter looking down on roofline"
+    "low trailing angle from behind",
+    "shot from another moving car",
+    "handheld roadside shot",
+    "tight crop with imperfect composition"
   ],
-  driver:[
-    "driver not visible behind very dark tinted glass",
-    "driver barely visible through deeply tinted windshield",
-    "photorealistic driver visible through side window"
+  driver: [
+    "driver not visible",
+    "driver barely visible through dark tint",
+    "driver visible and photorealistic"
   ],
-  mood:[
-    "aggressive and cinematic","dark and atmospheric","raw and candid","cold and moody","warm golden hour glow","gritty urban night","hyper-realistic street photography","mysterious and threatening","tense and urgent","melancholic night drive","underground scene aesthetic","noir city night","post-rain calm tension","industrial brutalism","eastern european street energy","menacing and powerful"
+  mood: [
+    "aggressive","dark and atmospheric","raw","tense","cold","moody","cinematic","gritty"
   ],
-  detail:[
-    "red brake calipers","yellow ceramic brake calipers","orange brake calipers","blue brake calipers","dark forged wheels","dark magnesium wheels","carbon vented hood","wide body aero kit","deep front splitter","carbon diffuser","smoked taillights","aftermarket exhaust tips","rain droplets on paint","wet reflections on asphalt","no license plate","carbon fiber roof","tinted rear lights","aftermarket side skirts","lowered suspension","fender flares","hood pins","blacked out badges","carbon side mirrors","custom wide arch kit","staggered fitment wheels","titanium exhaust tips","brake dust on wheel spokes","micro scratches on paint surface","stone chips on front bumper","real road grime around lower body panels"
+  detail: [
+    "large front splitter","carbon fiber vented hood","dark forged wheels","tinted rear lights","carbon mirrors","aftermarket exhaust tips","wide body kit","lowered suspension","real road grime on lower body panels","brake dust on wheels"
   ],
-  weather:[
-    "heavy rain","light drizzle","dense fog","light morning mist","overcast sky","clear night sky","light snow dusting","wet roads after rain stopped","dry summer heat haze","storm approaching","freezing drizzle","thick low fog","scattered puddles on road","damp air with ground mist"
+  weather: [
+    "clear evening air","light drizzle","wet road after rain","dense fog","dry summer haze","cold damp air","misty dawn air"
   ],
-  time:[
-    "3am dead of night","late night 1am","midnight","early dawn 5am","blue hour before sunrise","golden hour sunset","dusk last light","overcast grey afternoon","deep night no moon","twilight","2am empty streets","pre-dawn darkness"
+  time: [
+    "dusk","golden hour","late evening","blue hour","night","early dawn","sunrise"
   ]
 };
 
-const REALISM=[
-  {label:"Street Photo",tags:"hyper-realistic candid automotive street photo, iPhone 15 Pro Max look, natural lighting, believable exposure"},
-  {label:"Raw & Gritty",tags:"hyper-realistic automotive street photo, raw handheld capture, realistic motion, natural lens distortion, slight phone compression, imperfect real-world lighting"},
-  {label:"Ultra Realistic",tags:"hyper-realistic automotive photograph shot on Canon EOS R5, 85mm lens, shallow depth of field, natural bokeh, realistic reflections, unedited RAW look"},
-  {label:"Hyper Real",tags:"hyper-realistic automotive photograph shot on Canon EOS R5, 85mm lens, authentic RAW file, subtle chromatic aberration, natural grain, visible surface texture, real reflections, imperfect lighting, photojournalistic realism"}
-];
-
-const ANIMATE={
-  amove:[
+const ANIMATE = {
+  amove: [
     "camera pushes forward chasing the car",
     "camera tracks alongside at matching speed",
     "camera creeps forward from behind toward the car",
     "camera starts tight on rear wheel then pulls back to reveal full car",
-    "camera rises slowly from ground level to mid shot",
     "camera drifts alongside the door panel toward the front",
-    "camera pushes in tight on the grille then pulls back wide",
-    "camera slides low along front bumper then tilts up to roofline",
-    "camera tracks tight on exhaust tips then pulls back",
-    "camera pushes forward along wet road surface toward the car",
-    "camera slowly circles from low angle",
-    "camera creeps through rain-covered windshield of chase car"
+    "camera tracks tight on exhaust tips then pulls back"
   ],
-  acut:[
+  acut: [
     "cut to tight close-up of spinning wheel and brake caliper",
     "cut to driver silhouette barely visible through tinted glass",
     "cut to rear diffuser and exhaust tips at speed",
     "cut to wide shot revealing the full scene",
-    "cut to extreme close-up of rain droplets on glossy paint",
-    "cut to front grille and headlights cutting through atmosphere",
-    "cut to road surface and tire contact patch",
-    "cut to interior through rain-covered side window",
-    "cut to wide low angle as car pulls ahead"
+    "cut to front grille and headlights cutting through atmosphere"
   ],
-  aatmo:[
+  aatmo: [
     "wet asphalt reflections ripple as car passes",
     "orange street lights bleed across glossy paint",
     "rain droplets streak across the lens",
-    "red brake glow bleeds into puddles",
     "fog curls around the bumper and wheels",
-    "tunnel lights blur into streaks overhead",
-    "exhaust vapour rises slowly in cold air",
     "motion blur streaks the background",
-    "wet tire spray fans off rear wheels",
     "headlights cut sharp beams through darkness"
   ],
-  aspeed:[
-    "slow and cinematic, almost still",
-    "gradual gentle movement",
-    "medium pace, controlled",
+  aspeed: [
+    "slow and cinematic",
+    "controlled medium pace",
     "urgent and fast",
     "aggressive high speed"
   ]
 };
 
-const state={car:null,count:null,finish:null,scene:null,angle:null,driver:null,mood:null,detail:null,weather:null,time:null};
-const astate={amove:null,acut:null,aatmo:null,aspeed:null};
-let lastGenerated={car:'',count:'',finish:'',scene:'',weather:'',time:'',driver:''};
+const state = {
+  cameraStyle:null, car:null, count:null, formation:null, finish:null,
+  scene:null, angle:null, driver:null, mood:null, detail:null, weather:null, time:null
+};
+
+const astate = {amove:null, acut:null, aatmo:null, aspeed:null};
+
+let lastGenerated = {
+  cameraStyle:'', car:'', count:'', formation:'', finish:'', scene:'', angle:'', driver:'', weather:'', time:''
+};
+
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
 function goStep(n){
   [1,2,3].forEach(i=>{
@@ -312,20 +278,16 @@ function goStep(n){
     dot.classList.remove('active','done');
     if(i===n) dot.classList.add('active');
     else if(i<n) dot.classList.add('done');
-    const lbl=document.getElementById('lbl'+i);
-    lbl.classList.toggle('active',i===n);
+    document.getElementById('lbl'+i).classList.toggle('active',i===n);
   });
-  [1,2].forEach(i=>{
-    const line=document.getElementById('line'+i);
-    line.classList.toggle('done',i<n);
-  });
+  [1,2].forEach(i=>document.getElementById('line'+i).classList.toggle('done',i<n));
   if(n===3) updateKlingHeader();
 }
 
 function updateKlingHeader(){
   const el=document.getElementById('current-settings');
   if(lastGenerated.car){
-    el.innerHTML=`<span>Car:</span> ${lastGenerated.car} &nbsp;·&nbsp; <span>Count:</span> ${lastGenerated.count} &nbsp;·&nbsp; <span>Scene:</span> ${lastGenerated.scene} &nbsp;·&nbsp; <span>Driver:</span> ${lastGenerated.driver}`;
+    el.innerHTML=`<span>Style:</span> ${lastGenerated.cameraStyle} &nbsp;·&nbsp; <span>Car:</span> ${lastGenerated.car} &nbsp;·&nbsp; <span>Count:</span> ${lastGenerated.count} &nbsp;·&nbsp; <span>Formation:</span> ${lastGenerated.formation}`;
   }
 }
 
@@ -337,7 +299,11 @@ function makeChips(cid,key,items,st){
     const d=document.createElement('div');
     d.className='chip'+(st[key]===item?' active':'');
     d.textContent=item;
-    d.onclick=()=>{st[key]=st[key]===item?null:item;makeChips(cid,key,items,st);updateCount();};
+    d.onclick=()=>{
+      st[key]=st[key]===item?null:item;
+      makeChips(cid,key,items,st);
+      updateCount();
+    };
     el.appendChild(d);
   });
 }
@@ -348,14 +314,14 @@ function updateCount(){
   if(el) el.textContent=total.toLocaleString()+' possible combinations';
 }
 
-function updateRealismLabel(){
-  const v=parseInt(document.getElementById('realism-slider').value,10);
-  document.getElementById('realism-label').textContent=REALISM[v].label;
-}
+function clearKey(k){ state[k]=null; initMJ(); }
+function clearAKey(k){ astate[k]=null; initAnimate(); }
 
 function initMJ(){
+  makeChips('cameraStyle-chips','cameraStyle',DATA.cameraStyle,state);
   makeChips('car-chips','car',DATA.car,state);
   makeChips('count-chips','count',DATA.count,state);
+  makeChips('formation-chips','formation',DATA.formation,state);
   makeChips('finish-chips','finish',DATA.finish,state);
   makeChips('scene-chips','scene',DATA.scene,state);
   makeChips('angle-chips','angle',DATA.angle,state);
@@ -365,7 +331,6 @@ function initMJ(){
   makeChips('weather-chips','weather',DATA.weather,state);
   makeChips('time-chips','time',DATA.time,state);
   updateCount();
-  updateRealismLabel();
 }
 
 function initAnimate(){
@@ -375,70 +340,165 @@ function initAnimate(){
   makeChips('aspeed-chips','aspeed',ANIMATE.aspeed,astate);
 }
 
-function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
-function clearKey(k){state[k]=null;initMJ();}
-function clearAKey(k){astate[k]=null;initAnimate();}
-
 function randomize(){
-  Object.keys(state).forEach(k=>{state[k]=pick(DATA[k]);});
+  Object.keys(state).forEach(k=>state[k]=pick(DATA[k]));
+  if(state.count==="1 car") state.formation="side by side";
   initMJ();
   generateMJ();
 }
 
 function arandomize(){
-  Object.keys(astate).forEach(k=>{astate[k]=pick(ANIMATE[k]);});
+  Object.keys(astate).forEach(k=>astate[k]=pick(ANIMATE[k]));
   initAnimate();
   agenerate();
 }
 
-function carCountText(count, car){
+function cameraStyleText(style){
+  if(style==="iPhone candid"){
+    return "Candid action photo shot on iPhone 15 Pro, handheld, close up, imperfect composition. Vertical image.";
+  }
+  if(style==="DSLR street"){
+    return "Automotive street photograph shot on Canon EOS R5, 85mm lens, natural light, realistic handheld framing. Vertical image.";
+  }
+  return "Ultra-clean automotive photograph shot on Canon EOS R5, 85mm lens, crisp detail, realistic lighting, unedited RAW look. Vertical image.";
+}
+
+function formationText(count, finish, car, formation){
   if(count==="1 car"){
-    return `one heavily modified ${car}, isolated hero subject`;
+    return `One ${finish} custom ${car} driving at speed.`;
   }
+
   if(count==="2 cars"){
-    return `two heavily modified ${car}s rolling in the same direction, staggered formation, both vehicles clearly readable`;
+    if(formation==="side by side"){
+      return `Two ${finish} custom ${car}s racing side-by-side at high speed, tightly framed in vertical composition, both cars clearly visible.`;
+    }
+    if(formation==="staggered"){
+      return `Two ${finish} custom ${car}s racing in a staggered formation at high speed, both cars visible in vertical composition.`;
+    }
+    return `Two ${finish} custom ${car}s racing one behind another at high speed, realistic spacing between both cars.`;
   }
-  return `three heavily modified ${car}s rolling in convoy formation, same direction, realistic spacing, lead vehicle dominant`;
+
+  if(formation==="side by side"){
+    return `Three ${finish} custom ${car}s driving parallel across the road, compressed into a vertical composition, all cars visible.`;
+  }
+  if(formation==="staggered"){
+    return `Three ${finish} custom ${car}s driving in a staggered formation, all cars visible in vertical composition.`;
+  }
+  return `Three ${finish} custom ${car}s driving one behind another with realistic spacing.`;
 }
 
-function angleCompositionText(count, angle){
-  if(count==="1 car") return angle;
-  if(count==="2 cars") return `${angle}, both cars clearly visible, no heavy overlap`;
-  return `${angle}, all three cars visible in frame, cinematic depth layering, lead car dominant`;
+function foregroundText(count, finish, car, detail){
+  if(count==="1 car"){
+    return `Foreground is a heavily modified ${car} in ${finish} with ${detail}.`;
+  }
+  return `Foreground is a heavily modified ${car} in ${finish} with ${detail}.`;
 }
 
-function driverText(mode){
-  if(mode==="driver not visible behind very dark tinted glass"){
-    return `the driver is not visible at all behind very dark tinted glass`;
+function secondaryText(count, finish, car, formation){
+  if(count==="1 car") return "";
+  if(count==="2 cars"){
+    if(formation==="side by side"){
+      return `Secondary car is another ${finish} ${car} running in the adjacent lane.`;
+    }
+    if(formation==="staggered"){
+      return `Secondary car is another ${finish} ${car} slightly offset behind the lead vehicle.`;
+    }
+    return `Secondary car is another ${finish} ${car} following behind.`;
   }
-  if(mode==="driver barely visible through deeply tinted windshield"){
-    return `behind the deeply tinted windshield, only a barely discernible realistic dark silhouette of the driver is visible`;
+  return `The other cars are matching ${finish} ${car}s with consistent styling and believable spacing.`;
+}
+
+function angleText(angle, count, formation){
+  let base = "";
+  if(angle==="close-up action shot") base = "Close-up action photo with natural framing.";
+  else if(angle==="low front three-quarter angle") base = "Low front three-quarter angle.";
+  else if(angle==="front head-on low angle") base = "Front head-on low angle.";
+  else if(angle==="tight side tracking shot") base = "Tight side tracking shot.";
+  else if(angle==="wide side profile tracking shot") base = "Wide side profile tracking shot.";
+  else if(angle==="rear three-quarter low angle") base = "Rear three-quarter low angle.";
+  else if(angle==="low trailing angle from behind") base = "Low trailing angle from behind.";
+  else if(angle==="shot from another moving car") base = "Shot from another moving car.";
+  else if(angle==="handheld roadside shot") base = "Handheld roadside shot.";
+  else base = "Tight crop with imperfect composition.";
+
+  if(count!=="1 car" && formation==="side by side"){
+    return `${base} Both cars remain readable in the vertical frame.`;
   }
-  return `a photorealistic driver is visible through the side window, realistic face proportions, natural posture, believable hands, no distorted anatomy`;
+  return base;
+}
+
+function motionText(scene){
+  if(scene.includes("highway")) return "High speed motion blur in the surrounding guardrail, lane markings, and roadside elements.";
+  if(scene.includes("city")) return "High speed motion blur in the surrounding street lights, road markings, and nearby architecture.";
+  if(scene.includes("tunnel")) return "High speed motion blur in the tunnel lights and wall reflections.";
+  if(scene.includes("bridge")) return "High speed motion blur in the bridge rails and distant background.";
+  return "High speed motion blur in the surrounding environment.";
+}
+
+function lightText(time, finish){
+  if(time==="golden hour" || time==="dusk" || time==="sunrise"){
+    return `Realistic glare from the low sun on the ${finish} paint.`;
+  }
+  if(time==="night" || time==="late evening"){
+    return `Realistic reflections from street lights on the ${finish} paint.`;
+  }
+  return `Natural realistic reflections on the ${finish} paint.`;
+}
+
+function driverText(driver){
+  if(driver==="driver not visible"){
+    return "Driver fully hidden behind very dark tinted glass.";
+  }
+  if(driver==="driver barely visible through dark tint"){
+    return "Only a faint realistic silhouette of the driver is visible through dark tinted glass.";
+  }
+  return "Driver is visible and photorealistic, with believable face proportions, natural posture, and realistic hands.";
+}
+
+function textureText(style){
+  if(style==="iPhone candid"){
+    return "Authentic phone camera reflections, natural grain, slight handheld imperfection. No editing.";
+  }
+  if(style==="DSLR street"){
+    return "Authentic lens rendering, natural grain, realistic reflections, unedited RAW look. No editing.";
+  }
+  return "Crisp optical detail, realistic reflections, subtle natural grain, unedited RAW look. No editing.";
 }
 
 function generateMJ(){
-  const car=state.car||pick(DATA.car);
-  const count=state.count||pick(DATA.count);
-  const finish=state.finish||pick(DATA.finish);
-  const scene=state.scene||pick(DATA.scene);
-  const angle=state.angle||pick(DATA.angle);
-  const driver=state.driver||pick(DATA.driver);
-  const mood=state.mood||pick(DATA.mood);
-  const detail=state.detail||pick(DATA.detail);
-  const weather=state.weather||pick(DATA.weather);
-  const time=state.time||pick(DATA.time);
-  const rv=parseInt(document.getElementById('realism-slider').value,10);
-  const camera=REALISM[rv].tags;
+  const cameraStyle = state.cameraStyle || pick(DATA.cameraStyle);
+  const car = state.car || pick(DATA.car);
+  const count = state.count || pick(DATA.count);
+  const formation = state.formation || pick(DATA.formation);
+  const finish = state.finish || pick(DATA.finish);
+  const scene = state.scene || pick(DATA.scene);
+  const angle = state.angle || pick(DATA.angle);
+  const driver = state.driver || pick(DATA.driver);
+  const mood = state.mood || pick(DATA.mood);
+  const detail = state.detail || pick(DATA.detail);
+  const weather = state.weather || pick(DATA.weather);
+  const time = state.time || pick(DATA.time);
 
-  lastGenerated={car,count,finish,scene,weather,time,driver};
+  lastGenerated={cameraStyle,car,count,formation,finish,scene,angle,driver,weather,time};
 
-  const prompt = `${camera}, vertical automotive photo. ${carCountText(count, `${finish} ${car}`)} on a ${scene} at ${time}, ${weather}. ${angleCompositionText(count, angle)}. ${driverText(driver)}. ${detail}. No license plate, bracket area completely blacked out. Real glass reflections, realistic asphalt texture, authentic paint reflections, believable shadows, natural contrast, unedited RAW photo look, no CGI, no illustration, no game render. ${mood} atmosphere. taillights, road reflections, realistic body proportions, true automotive photography, highly believable real-world photo. --ar 9:16 --raw --stylize 0 --v 7`;
+  const prompt = [
+    cameraStyleText(cameraStyle),
+    `${formationText(count, finish, car, formation)} on a ${scene} at ${time}, ${weather}.`,
+    foregroundText(count, finish, car, detail),
+    secondaryText(count, finish, car, formation),
+    angleText(angle, count, formation),
+    motionText(scene),
+    lightText(time, finish),
+    driverText(driver),
+    `${textureText(cameraStyle)} ${mood}.`,
+    "Realistic body proportions, authentic glass reflections, believable asphalt texture, true automotive photography, no CGI, no illustration, no game render.",
+    "Vertical composition. --ar 9:16 --raw --stylize 0 --v 7"
+  ].filter(Boolean).join(" ");
 
-  document.getElementById('mj-text').textContent=prompt;
-  document.getElementById('mj-out').style.display='block';
-  document.getElementById('animate-next').style.display='block';
-  document.getElementById('mj-copied').textContent='';
+  document.getElementById('mj-text').textContent = prompt;
+  document.getElementById('mj-out').style.display = 'block';
+  document.getElementById('animate-next').style.display = 'block';
+  document.getElementById('mj-copied').textContent = '';
 }
 
 function agenerate(){
@@ -447,9 +507,9 @@ function agenerate(){
   const atmo=astate.aatmo||pick(ANIMATE.aatmo);
   const speed=astate.aspeed||pick(ANIMATE.aspeed);
   const context=lastGenerated.car
-    ? ` The vehicle in the photo is a ${lastGenerated.finish||''} ${lastGenerated.car} in ${lastGenerated.scene}. Driver visibility: ${lastGenerated.driver}.`
+    ? ` The photo shows a ${lastGenerated.finish} ${lastGenerated.car} in ${lastGenerated.scene}. Driver setting: ${lastGenerated.driver}.`
     : '';
-  const prompt=`${move}.${context} Movement is ${speed}. ${atmo}. ${cut}. Car moves forward at all times. No reverse motion. Camera always follows the subject. Maintain realistic automotive footage and natural momentum.`;
+  const prompt=`${move}.${context} Movement is ${speed}. ${atmo}. ${cut}. Vehicle always moves forward. Camera follows the subject continuously. Maintain realistic automotive footage, natural weight, and believable motion.`;
   document.getElementById('animate-text').textContent=prompt;
   document.getElementById('animate-out').style.display='block';
   document.getElementById('animate-copied').textContent='';
