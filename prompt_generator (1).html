@@ -91,6 +91,9 @@ input[type=range]{width:100%;accent-color:#fff;cursor:pointer}
 <div class="sec"><span>Car</span><span class="sec-clear" onclick="clearKey('car')">clear</span></div>
 <div class="chips" id="car-chips"></div>
 
+<div class="sec"><span>Car count</span><span class="sec-clear" onclick="clearKey('count')">clear</span></div>
+<div class="chips" id="count-chips"></div>
+
 <div class="sec"><span>Finish</span><span class="sec-clear" onclick="clearKey('finish')">clear</span></div>
 <div class="chips" id="finish-chips"></div>
 
@@ -197,21 +200,71 @@ input[type=range]{width:100%;accent-color:#fff;cursor:pointer}
 
 <script>
 const DATA={
-  car:["BMW E60 M5","BMW E39 M5","BMW E92 M3","BMW F10 M5","BMW F90 M5 Competition","BMW G80 M3 Competition","BMW E63 M6","BMW E46 M3","BMW M2 F87","BMW M4 F82","BMW M4 G82","BMW E34 M5","BMW E28 M5","BMW 7 Series E38","BMW M3 Touring G81","Mercedes E63 AMG W212","Mercedes C63 AMG W204","Mercedes C63 AMG W205","Mercedes S63 AMG W221","Mercedes CLS63 AMG","Mercedes E55 AMG W211","Mercedes G63 AMG W463","Mercedes GT63 AMG","Audi RS6 C7 Avant","Audi RS6 C8 Avant","Audi RS4 B8","Audi RS4 B7","Audi S5 B8 Coupe","Audi RS7 C7","Audi RS3 8V","Audi S8 D4","Porsche Panamera 970","Porsche Cayenne Turbo 958","Porsche 911 Turbo S 992","Dodge Charger SRT Hellcat","Dodge Challenger SRT Hellcat","Nissan GT-R R35","Toyota Supra A90","Toyota Supra A80","Lexus IS-F","Lexus GS-F","Jaguar XFR","Alfa Romeo Giulia Quadrifoglio","Maserati Ghibli Trofeo","Cadillac CTS-V","Chevrolet Camaro ZL1","Ford Mustang GT500 Shelby","Subaru WRX STI","Mitsubishi Lancer Evo X","Mazda RX-7 FD","Honda NSX NA1","Volvo V90 T8","Tesla Model S Plaid","BMW i5 M60","Audi RS e-tron GT"],
-  finish:["gloss black","matte black","satin black","carbon black wrap","deep midnight blue","dark navy gloss","matte army green","dark gunmetal grey","satin dark bronze","murdered-out all black","gloss anthracite","matte dark red","deep forest green","satin midnight purple","gloss obsidian","two-tone black and carbon","chrome delete all black","matte charcoal","dark olive drab","stealth grey matte","satin graphite"],
-  scene:["wet urban highway at night","dense foggy highway at dawn","underground parking garage","highway tunnel with orange lighting","elevated city interchange at dusk","rain-soaked city street at night","industrial zone at early dawn","mountain road in heavy fog","bridge crossing at night","gas station canopy at night","empty highway under overpass","wet cobblestone street in city center","highway at golden hour","suburban street after heavy rain","forest road at night","autobahn at high speed","flooded underpass at night","multi-level parking structure","rooftop parking at night","narrow alley in old city district","coastal highway at sunset","abandoned warehouse district","airport service road at night","highway on-ramp at speed","snow-dusted mountain pass","gravel road through pine forest","city ring road at 3am","port terminal at night","rain-soaked motorway interchange"],
-  angle:["extreme low side angle at wheel level","low trailing angle from behind","low front three-quarter angle","shot from inside chase car through windshield","ground level dead center between two cars","tight close-up on wheel and caliper","low angle from road surface","wide side profile tracking shot","rear bumper and exhaust close-up","front grille and badge close-up","overhead looking down on roof","shot through rain-covered windshield","extreme wide angle from roadside","tight on driver silhouette through glass","worm's eye view from pavement","tight on side mirror reflection","inside tunnel looking out toward exit","low angle under front splitter"],
-  mood:["aggressive and cinematic","dark and atmospheric","raw and candid","cold and moody","warm golden hour glow","gritty urban night","cinematic slow burn","hyper-realistic street photography","mysterious and threatening","tense and urgent","melancholic night drive","lone wolf energy","underground scene aesthetic","noir city night","post-rain calm tension","early morning solitude","industrial brutalism","eastern european street energy","late night highway solitude","menacing and powerful"],
-  detail:["red brake calipers","yellow ceramic brake calipers","orange brake calipers","blue brake calipers","dark forged wheels","dark magnesium wheels","carbon vented hood","wide body aero kit","deep front splitter","carbon diffuser","smoked taillights","aftermarket exhaust tips","rain droplets on paint","wet reflections on asphalt","no license plate","carbon fiber roof","tinted rear lights","aftermarket side skirts","lowered suspension","stretched tires","fender flares","hood pins","blacked out badges","carbon side mirrors","custom wide arch kit","staggered fitment wheels","titanium exhaust tips","brake dust on wheel spokes","micro scratches on paint surface","stone chips on front bumper"],
-  weather:["heavy rain","light drizzle","dense fog","light morning mist","overcast sky","clear night sky","light snow dusting","wet roads after rain stopped","dry summer heat haze","storm approaching","freezing drizzle","thick low fog","scattered puddles on road","damp air with ground mist"],
-  time:["3am dead of night","late night 1am","midnight","early dawn 5am","blue hour before sunrise","golden hour sunset","dusk last light","overcast grey afternoon","deep night no moon","twilight","2am empty streets","pre-dawn darkness"]
+  car:[
+    "BMW E60 M5","BMW E39 M5","BMW E92 M3","BMW F10 M5","BMW F90 M5 Competition","BMW G80 M3 Competition","BMW E63 M6","BMW E46 M3","BMW M2 F87","BMW M4 F82","BMW M4 G82","BMW E34 M5","BMW E28 M5","BMW 7 Series E38","BMW M3 Touring G81",
+    "BMW X5 M Competition F95","BMW X6 M Competition F96",
+    "Mercedes E63 AMG W212","Mercedes C63 AMG W204","Mercedes C63 AMG W205","Mercedes S63 AMG W221","Mercedes CLS63 AMG","Mercedes E55 AMG W211","Mercedes G63 AMG W463","Mercedes GT63 AMG","Mercedes AMG GT Black Series",
+    "Audi RS6 C7 Avant","Audi RS6 C8 Avant","Audi RS4 B8","Audi RS4 B7","Audi S5 B8 Coupe","Audi RS7 C7","Audi RS3 8V","Audi S8 D4","Audi SQ8","Audi R8 V10",
+    "Porsche Panamera 970","Porsche Cayenne Turbo 958","Porsche Cayenne Turbo GT","Porsche 911 Turbo S 992",
+    "Toyota Land Cruiser 300 GR Sport","Toyota Supra A90","Toyota Supra A80",
+    "Lexus LX 600 F Sport","Lexus IS-F","Lexus GS-F",
+    "Dodge Charger SRT Hellcat","Dodge Challenger SRT Hellcat","Jeep Grand Cherokee Trackhawk","Ram 1500 TRX","Ford F-150 Raptor R",
+    "Nissan GT-R R35","Cadillac CTS-V","Cadillac Escalade-V","Chevrolet Camaro ZL1","Ford Mustang GT500 Shelby",
+    "Land Rover Defender 110 V8","Range Rover Sport SV","Lamborghini Urus","Maserati Ghibli Trofeo",
+    "Jaguar XFR","Alfa Romeo Giulia Quadrifoglio","Subaru WRX STI","Mitsubishi Lancer Evo X","Mazda RX-7 FD","Honda NSX NA1",
+    "Volvo V90 T8","Tesla Model S Plaid","BMW i5 M60","Audi RS e-tron GT"
+  ],
+  count:[
+    "1 car",
+    "2 cars",
+    "3 cars"
+  ],
+  finish:[
+    "gloss black","matte black","satin black","carbon black wrap","deep midnight blue","dark navy gloss","matte army green","dark gunmetal grey","satin dark bronze","murdered-out all black","gloss anthracite","matte dark red","deep forest green","satin midnight purple","gloss obsidian","two-tone black and carbon","chrome delete all black","matte charcoal","dark olive drab","stealth grey matte","satin graphite"
+  ],
+  scene:[
+    "wet urban highway at night","dense foggy highway at dawn","underground parking garage","highway tunnel with orange lighting","elevated city interchange at dusk","rain-soaked city street at night","industrial zone at early dawn","mountain road in heavy fog","bridge crossing at night","gas station canopy at night","empty highway under overpass","wet cobblestone street in city center","highway at golden hour","suburban street after heavy rain","forest road at night","autobahn at high speed","flooded underpass at night","multi-level parking structure","rooftop parking at night","narrow alley in old city district","coastal highway at sunset","abandoned warehouse district","airport service road at night","highway on-ramp at speed","snow-dusted mountain pass","gravel road through pine forest","city ring road at 3am","port terminal at night","rain-soaked motorway interchange"
+  ],
+  angle:[
+    "low front three-quarter angle",
+    "front head-on low angle",
+    "wide side profile tracking shot",
+    "extreme low side angle at wheel level",
+    "ground level dead center between two cars",
+    "low angle from road surface",
+    "shot from inside chase car through windshield",
+    "tight close-up on wheel and caliper",
+    "front grille and badge close-up",
+    "rear dead-center tracking shot",
+    "low trailing angle from behind",
+    "rear three-quarter low angle",
+    "high rear three-quarter angle",
+    "rear bumper and exhaust close-up",
+    "shot from behind through rain-covered rear glass of chase car",
+    "direct rear view from another moving car",
+    "rear view with taillights dominating the frame",
+    "worm's eye rear angle from pavement",
+    "overhead rear three-quarter looking down on roofline"
+  ],
+  mood:[
+    "aggressive and cinematic","dark and atmospheric","raw and candid","cold and moody","warm golden hour glow","gritty urban night","cinematic slow burn","hyper-realistic street photography","mysterious and threatening","tense and urgent","melancholic night drive","lone wolf energy","underground scene aesthetic","noir city night","post-rain calm tension","early morning solitude","industrial brutalism","eastern european street energy","late night highway solitude","menacing and powerful"
+  ],
+  detail:[
+    "red brake calipers","yellow ceramic brake calipers","orange brake calipers","blue brake calipers","dark forged wheels","dark magnesium wheels","carbon vented hood","wide body aero kit","deep front splitter","carbon diffuser","smoked taillights","aftermarket exhaust tips","rain droplets on paint","wet reflections on asphalt","no license plate","carbon fiber roof","tinted rear lights","aftermarket side skirts","lowered suspension","stretched tires","fender flares","hood pins","blacked out badges","carbon side mirrors","custom wide arch kit","staggered fitment wheels","titanium exhaust tips","brake dust on wheel spokes","micro scratches on paint surface","stone chips on front bumper"
+  ],
+  weather:[
+    "heavy rain","light drizzle","dense fog","light morning mist","overcast sky","clear night sky","light snow dusting","wet roads after rain stopped","dry summer heat haze","storm approaching","freezing drizzle","thick low fog","scattered puddles on road","damp air with ground mist"
+  ],
+  time:[
+    "3am dead of night","late night 1am","midnight","early dawn 5am","blue hour before sunrise","golden hour sunset","dusk last light","overcast grey afternoon","deep night no moon","twilight","2am empty streets","pre-dawn darkness"
+  ]
 };
 
 const REALISM=[
-  {label:"Street Photo",tags:"Hyper-realistic candid raw handheld photo shot on an iPhone 15 Pro Max"},
-  {label:"Raw & Gritty",tags:"Hyper-realistic candid raw handheld photo shot on an iPhone 15 Pro Max, natural lens distortion, authentic phone compression artifacts, imperfect handheld shake"},
-  {label:"Ultra Realistic",tags:"Hyper-realistic street photograph shot on a Canon EOS R5 with 85mm f/1.4 lens, shallow depth of field, natural bokeh, slight chromatic aberration on edges, RAW file unedited"},
-  {label:"Hyper Real",tags:"Hyper-realistic street photograph shot on a Canon EOS R5 with 85mm f/1.4 lens, shallow depth of field, natural bokeh, slight chromatic aberration, visible lens dust particles, micro scratches on paint, brake dust on wheel spokes, authentic film grain, RAW file straight from camera, zero post-processing, imperfect real-world lighting, photojournalism quality"}
+  {label:"Street Photo",tags:"hyper-realistic candid raw handheld photo shot on an iPhone 15 Pro Max"},
+  {label:"Raw & Gritty",tags:"hyper-realistic candid raw handheld photo shot on an iPhone 15 Pro Max, natural lens distortion, authentic phone compression artifacts, imperfect handheld shake"},
+  {label:"Ultra Realistic",tags:"hyper-realistic street photograph shot on a Canon EOS R5 with 85mm f/1.4 lens, shallow depth of field, natural bokeh, slight chromatic aberration on edges, RAW file unedited"},
+  {label:"Hyper Real",tags:"hyper-realistic street photograph shot on a Canon EOS R5 with 85mm f/1.4 lens, shallow depth of field, natural bokeh, slight chromatic aberration, visible lens dust particles, micro scratches on paint, brake dust on wheel spokes, authentic film grain, RAW file straight from camera, zero post-processing, imperfect real-world lighting, photojournalism quality"}
 ];
 
 const ANIMATE={
@@ -221,9 +274,9 @@ const ANIMATE={
   aspeed:["slow and cinematic, almost still","gradual gentle movement","medium pace, controlled","urgent and fast","aggressive high speed"]
 };
 
-const state={car:null,finish:null,scene:null,angle:null,mood:null,detail:null,weather:null,time:null};
+const state={car:null,count:null,finish:null,scene:null,angle:null,mood:null,detail:null,weather:null,time:null};
 const astate={amove:null,acut:null,aatmo:null,aspeed:null};
-let lastGenerated={car:'',finish:'',scene:'',weather:'',time:''};
+let lastGenerated={car:'',count:'',finish:'',scene:'',weather:'',time:''};
 
 function goStep(n){
   [1,2,3].forEach(i=>{
@@ -245,7 +298,7 @@ function goStep(n){
 function updateKlingHeader(){
   const el=document.getElementById('current-settings');
   if(lastGenerated.car){
-    el.innerHTML=`<span>Car:</span> ${lastGenerated.car} &nbsp;·&nbsp; <span>Scene:</span> ${lastGenerated.scene} &nbsp;·&nbsp; <span>Weather:</span> ${lastGenerated.weather} &nbsp;·&nbsp; <span>Time:</span> ${lastGenerated.time}`;
+    el.innerHTML=`<span>Car:</span> ${lastGenerated.car} &nbsp;·&nbsp; <span>Count:</span> ${lastGenerated.count} &nbsp;·&nbsp; <span>Scene:</span> ${lastGenerated.scene} &nbsp;·&nbsp; <span>Weather:</span> ${lastGenerated.weather} &nbsp;·&nbsp; <span>Time:</span> ${lastGenerated.time}`;
   }
 }
 
@@ -275,6 +328,7 @@ function updateRealismLabel(){
 
 function initMJ(){
   makeChips('car-chips','car',DATA.car,state);
+  makeChips('count-chips','count',DATA.count,state);
   makeChips('finish-chips','finish',DATA.finish,state);
   makeChips('scene-chips','scene',DATA.scene,state);
   makeChips('angle-chips','angle',DATA.angle,state);
@@ -306,8 +360,40 @@ function arandomize(){
   initAnimate();agenerate();
 }
 
+function weightedAngle(angle){
+  const rearHeavy=[
+    "rear dead-center tracking shot",
+    "low trailing angle from behind",
+    "rear three-quarter low angle",
+    "high rear three-quarter angle",
+    "direct rear view from another moving car",
+    "rear view with taillights dominating the frame",
+    "worm's eye rear angle from pavement"
+  ];
+  return rearHeavy.includes(angle)?`${angle}::1.5`:`${angle}::1.15`;
+}
+
+function carCountText(count,car){
+  if(count==="1 car"){
+    return `one heavily modified ${car}, isolated hero subject`;
+  }
+  if(count==="2 cars"){
+    return `two heavily modified ${car}s rolling together in the same direction, staggered formation, clear spacing between both cars`;
+  }
+  return `three heavily modified ${car}s rolling together in convoy formation, same direction, cinematic spacing, the lead car remains the hero subject`;
+}
+
+function angleCompositionText(count,angle){
+  if(count==="1 car") return angle;
+  if(count==="2 cars"){
+    return `${angle}, both cars clearly visible, no overlap hiding the second car`;
+  }
+  return `${angle}, all three cars readable in frame, cinematic depth layering, lead car dominant`;
+}
+
 function generateMJ(){
   const car=state.car||pick(DATA.car);
+  const count=state.count||pick(DATA.count);
   const finish=state.finish||pick(DATA.finish);
   const scene=state.scene||pick(DATA.scene);
   const angle=state.angle||pick(DATA.angle);
@@ -317,8 +403,18 @@ function generateMJ(){
   const time=state.time||pick(DATA.time);
   const rv=parseInt(document.getElementById('realism-slider').value);
   const camera=REALISM[rv].tags;
-  lastGenerated={car,finish,scene,weather,time};
-  const prompt=`${camera}, vertical orientation. A heavily modified ${finish} ${car} on a ${scene} at ${time}, ${weather}. ${angle}. ${detail}. No license plate, bracket area completely blacked out. Behind the deeply tinted windshield, a barely discernible dark silhouette of the driver — head and shoulders only. Both cars traveling in the same direction. ${mood} atmosphere. Environment and architecture reflected across the car body. --ar 9:16 --raw --stylize 0`;
+
+  lastGenerated={car,count,finish,scene,weather,time};
+
+  const subjectBlock = `${camera}::1.35`;
+  const carsBlock = `${carCountText(count, `${finish} ${car}`)}::1.5`;
+  const sceneBlock = `${scene}, ${time}, ${weather}::1.2`;
+  const angleBlock = `${angleCompositionText(count, weightedAngle(angle))}, rear view emphasis if possible::1.35`;
+  const detailBlock = `${detail}, no license plate, bracket area completely blacked out, deeply tinted windshield, barely discernible dark silhouette of driver, environment and architecture reflected across the car body::1.15`;
+  const moodBlock = `${mood} atmosphere::1.1`;
+
+  const prompt = `${subjectBlock} ${carsBlock} ${sceneBlock} ${angleBlock} ${detailBlock} ${moodBlock} --ar 9:16 --raw --stylize 0`;
+
   document.getElementById('mj-text').textContent=prompt;
   document.getElementById('mj-out').style.display='block';
   document.getElementById('animate-next').style.display='block';
