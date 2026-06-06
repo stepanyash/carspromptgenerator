@@ -14,8 +14,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .step-dot.done::after{content:'✓';font-size:10px}
 .step-line{flex:1;height:1px;background:#1a1a1a}
 .step-line.done{background:#333}
-.step-label{font-size:11px;color:#444}
-.step-label.active{color:#fff}
 .step-labels{display:flex;justify-content:space-between;margin-bottom:1.5rem;margin-top:-1rem}
 .step-labels span{font-size:10px;color:#444;text-align:center;width:60px}
 .step-labels span.active{color:#888}
@@ -24,7 +22,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .sec-clear{font-size:10px;color:#333;cursor:pointer;text-decoration:underline}
 .sec-clear:hover{color:#666}
 .chips{display:flex;flex-wrap:wrap;gap:5px}
-.chip{padding:5px 11px;border-radius:20px;border:1px solid #1e1e1e;font-size:11px;cursor:pointer;background:#111;color:#888;transition:all .15s;user-select:none}
+.chip{padding:6px 11px;border-radius:20px;border:1px solid #1e1e1e;font-size:11px;cursor:pointer;background:#111;color:#888;transition:all .15s;user-select:none}
 .chip:hover{border-color:#444;color:#ddd}
 .chip.active{background:#fff;color:#000;border-color:#fff}
 
@@ -36,11 +34,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 input[type=range]{width:100%;accent-color:#fff;cursor:pointer}
 
 .divider{height:1px;background:#1a1a1a;margin:1.25rem 0}
-
 .out{margin-top:1.25rem;background:#111;border-radius:12px;border:1px solid #1e1e1e;padding:1rem;display:none}
 .out-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
 .out-text{font-size:12px;color:#ddd;line-height:1.7;white-space:pre-wrap;word-break:break-word}
-
 .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1.25rem}
 .btn{padding:11px;border-radius:10px;border:1px solid #222;font-size:13px;cursor:pointer;background:#111;color:#888;transition:all .15s}
 .btn:hover{border-color:#444;color:#fff}
@@ -49,153 +45,143 @@ input[type=range]{width:100%;accent-color:#fff;cursor:pointer}
 .btn.primary:hover{background:#eee}
 .btn.accent{background:#111;color:#fff;border-color:#444;grid-column:1/-1}
 .btn.accent:hover{background:#1a1a1a;border-color:#666}
-
 .copy-btn{margin-top:10px;padding:8px 16px;border-radius:8px;border:1px solid #222;font-size:12px;cursor:pointer;background:#0a0a0a;color:#666;width:100%;transition:all .15s}
 .copy-btn:hover{border-color:#444;color:#fff}
 .copied{font-size:11px;color:#444;margin-top:6px;min-height:14px;text-align:center}
-
 .animate-next{display:none;margin-top:1rem;padding:1rem;background:#0f1a0f;border:1px solid #1a2e1a;border-radius:12px}
 .animate-next p{font-size:12px;color:#5a8a5a;line-height:1.6;margin-bottom:12px}
 .animate-next strong{color:#8aba8a}
-
-.kling-section{display:none}
 .kling-header{background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:1rem;margin-bottom:1rem}
 .kling-header p{font-size:12px;color:#666;line-height:1.6}
 .kling-header strong{color:#aaa}
 .current-settings{font-size:11px;color:#444;margin-top:8px;line-height:1.8}
 .current-settings span{color:#666}
-
 .combo-count{font-size:10px;color:#2a2a2a;margin-top:6px}
 </style>
 </head>
 <body>
 
 <div style="padding:1rem 0 0">
-
-<div class="step-indicator">
-  <div class="step-dot active" id="dot1" onclick="goStep(1)">1</div>
-  <div class="step-line" id="line1"></div>
-  <div class="step-dot" id="dot2" onclick="goStep(2)">2</div>
-  <div class="step-line" id="line2"></div>
-  <div class="step-dot" id="dot3" onclick="goStep(3)">3</div>
-</div>
-<div class="step-labels">
-  <span class="active" id="lbl1">Build prompt</span>
-  <span id="lbl2">Generate photo</span>
-  <span id="lbl3">Animate it</span>
-</div>
-
-<!-- STEP 1: BUILD PROMPT -->
-<div id="step1">
-
-<div class="sec"><span>Car</span><span class="sec-clear" onclick="clearKey('car')">clear</span></div>
-<div class="chips" id="car-chips"></div>
-
-<div class="sec"><span>Car count</span><span class="sec-clear" onclick="clearKey('count')">clear</span></div>
-<div class="chips" id="count-chips"></div>
-
-<div class="sec"><span>Finish</span><span class="sec-clear" onclick="clearKey('finish')">clear</span></div>
-<div class="chips" id="finish-chips"></div>
-
-<div class="sec"><span>Scene</span><span class="sec-clear" onclick="clearKey('scene')">clear</span></div>
-<div class="chips" id="scene-chips"></div>
-
-<div class="sec"><span>Camera angle</span><span class="sec-clear" onclick="clearKey('angle')">clear</span></div>
-<div class="chips" id="angle-chips"></div>
-
-<div class="sec"><span>Mood</span><span class="sec-clear" onclick="clearKey('mood')">clear</span></div>
-<div class="chips" id="mood-chips"></div>
-
-<div class="sec"><span>Detail</span><span class="sec-clear" onclick="clearKey('detail')">clear</span></div>
-<div class="chips" id="detail-chips"></div>
-
-<div class="sec"><span>Weather</span><span class="sec-clear" onclick="clearKey('weather')">clear</span></div>
-<div class="chips" id="weather-chips"></div>
-
-<div class="sec"><span>Time of day</span><span class="sec-clear" onclick="clearKey('time')">clear</span></div>
-<div class="chips" id="time-chips"></div>
-
-<div class="realism-box">
-  <div class="realism-header">
-    <span class="realism-title">Realism level</span>
-    <span class="realism-value" id="realism-label">Street Photo</span>
+  <div class="step-indicator">
+    <div class="step-dot active" id="dot1" onclick="goStep(1)">1</div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-dot" id="dot2" onclick="goStep(2)">2</div>
+    <div class="step-line" id="line2"></div>
+    <div class="step-dot" id="dot3" onclick="goStep(3)">3</div>
   </div>
-  <input type="range" min="0" max="3" value="1" step="1" id="realism-slider" oninput="updateRealismLabel()">
-  <div class="realism-labels">
-    <span>Street</span><span>Raw</span><span>Ultra</span><span>Hyper Real</span>
+  <div class="step-labels">
+    <span class="active" id="lbl1">Build prompt</span>
+    <span id="lbl2">Generate photo</span>
+    <span id="lbl3">Animate it</span>
   </div>
-</div>
 
-<div class="divider"></div>
-<div class="combo-count" id="combo-count"></div>
+  <div id="step1">
+    <div class="sec"><span>Car</span><span class="sec-clear" onclick="clearKey('car')">clear</span></div>
+    <div class="chips" id="car-chips"></div>
 
-<div class="btn-row">
-  <button class="btn" onclick="randomize()">&#8635; Randomize</button>
-  <button class="btn primary" onclick="generateMJ()">&#10024; Generate</button>
-</div>
+    <div class="sec"><span>Car count</span><span class="sec-clear" onclick="clearKey('count')">clear</span></div>
+    <div class="chips" id="count-chips"></div>
 
-<div class="out" id="mj-out">
-  <div class="out-label">Midjourney prompt</div>
-  <div class="out-text" id="mj-text"></div>
-  <button class="copy-btn" onclick="copyText('mj-text','mj-copied')">Copy prompt</button>
-  <div class="copied" id="mj-copied"></div>
-  <div class="animate-next" id="animate-next">
-    <p>&#x2714;&#xfe0f; Prompt ready. Go generate your photo in Midjourney, then come back here to animate it — <strong>your settings are saved.</strong></p>
-    <button class="btn accent" onclick="goStep(3)">&#9654; I have my photo — animate it now</button>
+    <div class="sec"><span>Finish</span><span class="sec-clear" onclick="clearKey('finish')">clear</span></div>
+    <div class="chips" id="finish-chips"></div>
+
+    <div class="sec"><span>Scene</span><span class="sec-clear" onclick="clearKey('scene')">clear</span></div>
+    <div class="chips" id="scene-chips"></div>
+
+    <div class="sec"><span>Camera angle</span><span class="sec-clear" onclick="clearKey('angle')">clear</span></div>
+    <div class="chips" id="angle-chips"></div>
+
+    <div class="sec"><span>Driver visibility</span><span class="sec-clear" onclick="clearKey('driver')">clear</span></div>
+    <div class="chips" id="driver-chips"></div>
+
+    <div class="sec"><span>Mood</span><span class="sec-clear" onclick="clearKey('mood')">clear</span></div>
+    <div class="chips" id="mood-chips"></div>
+
+    <div class="sec"><span>Detail</span><span class="sec-clear" onclick="clearKey('detail')">clear</span></div>
+    <div class="chips" id="detail-chips"></div>
+
+    <div class="sec"><span>Weather</span><span class="sec-clear" onclick="clearKey('weather')">clear</span></div>
+    <div class="chips" id="weather-chips"></div>
+
+    <div class="sec"><span>Time of day</span><span class="sec-clear" onclick="clearKey('time')">clear</span></div>
+    <div class="chips" id="time-chips"></div>
+
+    <div class="realism-box">
+      <div class="realism-header">
+        <span class="realism-title">Realism level</span>
+        <span class="realism-value" id="realism-label">Street Photo</span>
+      </div>
+      <input type="range" min="0" max="3" value="2" step="1" id="realism-slider" oninput="updateRealismLabel()">
+      <div class="realism-labels">
+        <span>Street</span><span>Raw</span><span>Ultra</span><span>Hyper Real</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="combo-count" id="combo-count"></div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="randomize()">&#8635; Randomize</button>
+      <button class="btn primary" onclick="generateMJ()">&#10024; Generate</button>
+    </div>
+
+    <div class="out" id="mj-out">
+      <div class="out-label">Midjourney prompt</div>
+      <div class="out-text" id="mj-text"></div>
+      <button class="copy-btn" onclick="copyText('mj-text','mj-copied')">Copy prompt</button>
+      <div class="copied" id="mj-copied"></div>
+      <div class="animate-next" id="animate-next">
+        <p>&#x2714;&#xfe0f; Prompt ready. Go generate your photo in Midjourney, then come back here to animate it — <strong>your settings are saved.</strong></p>
+        <button class="btn accent" onclick="goStep(3)">&#9654; I have my photo — animate it now</button>
+      </div>
+    </div>
   </div>
-</div>
 
-</div>
-
-<!-- STEP 2: PLACEHOLDER -->
-<div id="step2" style="display:none">
-  <div style="padding:2rem 0;text-align:center">
-    <p style="font-size:14px;color:#666;margin-bottom:8px">Go generate your photo in Midjourney</p>
-    <p style="font-size:12px;color:#333;margin-bottom:1.5rem">Copy the prompt from Step 1, paste it into Midjourney, pick the best result.</p>
-    <button class="btn accent" onclick="goStep(3)" style="max-width:280px;margin:0 auto">&#9654; Done — animate my photo</button>
-    <br><br>
-    <button class="btn" onclick="goStep(1)" style="max-width:280px;margin:0 auto;font-size:12px">&#8592; Back to edit prompt</button>
+  <div id="step2" style="display:none">
+    <div style="padding:2rem 0;text-align:center">
+      <p style="font-size:14px;color:#666;margin-bottom:8px">Go generate your photo in Midjourney</p>
+      <p style="font-size:12px;color:#333;margin-bottom:1.5rem">Copy the prompt from Step 1, paste it into Midjourney, pick the best result.</p>
+      <button class="btn accent" onclick="goStep(3)" style="max-width:280px;margin:0 auto">&#9654; Done — animate my photo</button>
+      <br><br>
+      <button class="btn" onclick="goStep(1)" style="max-width:280px;margin:0 auto;font-size:12px">&#8592; Back to edit prompt</button>
+    </div>
   </div>
-</div>
 
-<!-- STEP 3: ANIMATE -->
-<div id="step3" style="display:none">
+  <div id="step3" style="display:none">
+    <div class="kling-header">
+      <p>Upload your Midjourney photo to <strong>Kling → Image-to-Video</strong>, then use this prompt for camera movement.</p>
+      <div class="current-settings" id="current-settings"></div>
+    </div>
 
-<div class="kling-header">
-  <p>Upload your Midjourney photo to <strong>Kling → Image-to-Video</strong>, then use this prompt for camera movement.</p>
-  <div class="current-settings" id="current-settings"></div>
-</div>
+    <div class="sec"><span>Camera move</span><span class="sec-clear" onclick="clearAKey('amove')">clear</span></div>
+    <div class="chips" id="amove-chips"></div>
 
-<div class="sec"><span>Camera move</span><span class="sec-clear" onclick="clearAKey('amove')">clear</span></div>
-<div class="chips" id="amove-chips"></div>
+    <div class="sec"><span>Cut to</span><span class="sec-clear" onclick="clearAKey('acut')">clear</span></div>
+    <div class="chips" id="acut-chips"></div>
 
-<div class="sec"><span>Cut to</span><span class="sec-clear" onclick="clearAKey('acut')">clear</span></div>
-<div class="chips" id="acut-chips"></div>
+    <div class="sec"><span>Atmosphere</span><span class="sec-clear" onclick="clearAKey('aatmo')">clear</span></div>
+    <div class="chips" id="aatmo-chips"></div>
 
-<div class="sec"><span>Atmosphere</span><span class="sec-clear" onclick="clearAKey('aatmo')">clear</span></div>
-<div class="chips" id="aatmo-chips"></div>
+    <div class="sec"><span>Speed</span><span class="sec-clear" onclick="clearAKey('aspeed')">clear</span></div>
+    <div class="chips" id="aspeed-chips"></div>
 
-<div class="sec"><span>Speed</span><span class="sec-clear" onclick="clearAKey('aspeed')">clear</span></div>
-<div class="chips" id="aspeed-chips"></div>
+    <div class="divider"></div>
 
-<div class="divider"></div>
+    <div class="btn-row">
+      <button class="btn" onclick="arandomize()">&#8635; Randomize</button>
+      <button class="btn primary" onclick="agenerate()">&#10024; Generate</button>
+    </div>
 
-<div class="btn-row">
-  <button class="btn" onclick="arandomize()">&#8635; Randomize</button>
-  <button class="btn primary" onclick="agenerate()">&#10024; Generate</button>
-</div>
-
-<div class="out" id="animate-out">
-  <div class="out-label">Kling prompt — animate your photo</div>
-  <div class="out-text" id="animate-text"></div>
-  <button class="copy-btn" onclick="copyText('animate-text','animate-copied')">Copy prompt</button>
-  <div class="copied" id="animate-copied"></div>
-  <div style="margin-top:12px">
-    <button class="btn" style="width:100%;font-size:12px" onclick="goStep(1)">&#8592; Back to Midjourney — make a new photo</button>
+    <div class="out" id="animate-out">
+      <div class="out-label">Kling prompt — animate your photo</div>
+      <div class="out-text" id="animate-text"></div>
+      <button class="copy-btn" onclick="copyText('animate-text','animate-copied')">Copy prompt</button>
+      <div class="copied" id="animate-copied"></div>
+      <div style="margin-top:12px">
+        <button class="btn" style="width:100%;font-size:12px" onclick="goStep(1)">&#8592; Back to Midjourney — make a new photo</button>
+      </div>
+    </div>
   </div>
-</div>
-
-</div>
 </div>
 
 <script>
@@ -214,11 +200,7 @@ const DATA={
     "Jaguar XFR","Alfa Romeo Giulia Quadrifoglio","Subaru WRX STI","Mitsubishi Lancer Evo X","Mazda RX-7 FD","Honda NSX NA1",
     "Volvo V90 T8","Tesla Model S Plaid","BMW i5 M60","Audi RS e-tron GT"
   ],
-  count:[
-    "1 car",
-    "2 cars",
-    "3 cars"
-  ],
+  count:["1 car","2 cars","3 cars"],
   finish:[
     "gloss black","matte black","satin black","carbon black wrap","deep midnight blue","dark navy gloss","matte army green","dark gunmetal grey","satin dark bronze","murdered-out all black","gloss anthracite","matte dark red","deep forest green","satin midnight purple","gloss obsidian","two-tone black and carbon","chrome delete all black","matte charcoal","dark olive drab","stealth grey matte","satin graphite"
   ],
@@ -246,11 +228,16 @@ const DATA={
     "worm's eye rear angle from pavement",
     "overhead rear three-quarter looking down on roofline"
   ],
+  driver:[
+    "driver not visible behind very dark tinted glass",
+    "driver barely visible through deeply tinted windshield",
+    "photorealistic driver visible through side window"
+  ],
   mood:[
-    "aggressive and cinematic","dark and atmospheric","raw and candid","cold and moody","warm golden hour glow","gritty urban night","cinematic slow burn","hyper-realistic street photography","mysterious and threatening","tense and urgent","melancholic night drive","lone wolf energy","underground scene aesthetic","noir city night","post-rain calm tension","early morning solitude","industrial brutalism","eastern european street energy","late night highway solitude","menacing and powerful"
+    "aggressive and cinematic","dark and atmospheric","raw and candid","cold and moody","warm golden hour glow","gritty urban night","hyper-realistic street photography","mysterious and threatening","tense and urgent","melancholic night drive","underground scene aesthetic","noir city night","post-rain calm tension","industrial brutalism","eastern european street energy","menacing and powerful"
   ],
   detail:[
-    "red brake calipers","yellow ceramic brake calipers","orange brake calipers","blue brake calipers","dark forged wheels","dark magnesium wheels","carbon vented hood","wide body aero kit","deep front splitter","carbon diffuser","smoked taillights","aftermarket exhaust tips","rain droplets on paint","wet reflections on asphalt","no license plate","carbon fiber roof","tinted rear lights","aftermarket side skirts","lowered suspension","stretched tires","fender flares","hood pins","blacked out badges","carbon side mirrors","custom wide arch kit","staggered fitment wheels","titanium exhaust tips","brake dust on wheel spokes","micro scratches on paint surface","stone chips on front bumper"
+    "red brake calipers","yellow ceramic brake calipers","orange brake calipers","blue brake calipers","dark forged wheels","dark magnesium wheels","carbon vented hood","wide body aero kit","deep front splitter","carbon diffuser","smoked taillights","aftermarket exhaust tips","rain droplets on paint","wet reflections on asphalt","no license plate","carbon fiber roof","tinted rear lights","aftermarket side skirts","lowered suspension","fender flares","hood pins","blacked out badges","carbon side mirrors","custom wide arch kit","staggered fitment wheels","titanium exhaust tips","brake dust on wheel spokes","micro scratches on paint surface","stone chips on front bumper","real road grime around lower body panels"
   ],
   weather:[
     "heavy rain","light drizzle","dense fog","light morning mist","overcast sky","clear night sky","light snow dusting","wet roads after rain stopped","dry summer heat haze","storm approaching","freezing drizzle","thick low fog","scattered puddles on road","damp air with ground mist"
@@ -261,22 +248,62 @@ const DATA={
 };
 
 const REALISM=[
-  {label:"Street Photo",tags:"hyper-realistic candid raw handheld photo shot on an iPhone 15 Pro Max"},
-  {label:"Raw & Gritty",tags:"hyper-realistic candid raw handheld photo shot on an iPhone 15 Pro Max, natural lens distortion, authentic phone compression artifacts, imperfect handheld shake"},
-  {label:"Ultra Realistic",tags:"hyper-realistic street photograph shot on a Canon EOS R5 with 85mm f/1.4 lens, shallow depth of field, natural bokeh, slight chromatic aberration on edges, RAW file unedited"},
-  {label:"Hyper Real",tags:"hyper-realistic street photograph shot on a Canon EOS R5 with 85mm f/1.4 lens, shallow depth of field, natural bokeh, slight chromatic aberration, visible lens dust particles, micro scratches on paint, brake dust on wheel spokes, authentic film grain, RAW file straight from camera, zero post-processing, imperfect real-world lighting, photojournalism quality"}
+  {label:"Street Photo",tags:"hyper-realistic candid automotive street photo, iPhone 15 Pro Max look, natural lighting, believable exposure"},
+  {label:"Raw & Gritty",tags:"hyper-realistic automotive street photo, raw handheld capture, realistic motion, natural lens distortion, slight phone compression, imperfect real-world lighting"},
+  {label:"Ultra Realistic",tags:"hyper-realistic automotive photograph shot on Canon EOS R5, 85mm lens, shallow depth of field, natural bokeh, realistic reflections, unedited RAW look"},
+  {label:"Hyper Real",tags:"hyper-realistic automotive photograph shot on Canon EOS R5, 85mm lens, authentic RAW file, subtle chromatic aberration, natural grain, visible surface texture, real reflections, imperfect lighting, photojournalistic realism"}
 ];
 
 const ANIMATE={
-  amove:["camera pushes forward chasing the car","camera tracks alongside at matching speed","camera creeps forward from behind toward the car","camera starts tight on rear wheel then pulls back to reveal full car","camera rises slowly from ground level to mid shot","camera drifts alongside the door panel toward the front","camera pushes in tight on the grille then pulls back wide","camera slides low along front bumper then tilts up to roofline","camera tracks tight on exhaust tips then pulls back","camera pushes forward along wet road surface toward the car","camera slowly circles from low angle","camera creeps through rain-covered windshield of chase car"],
-  acut:["cut to tight close-up of spinning wheel and brake caliper","cut to driver silhouette barely visible through tinted glass","cut to rear diffuser and exhaust tips at speed","cut to wide shot revealing the full scene","cut to extreme close-up of rain droplets on glossy paint","cut to front grille and headlights cutting through atmosphere","cut to road surface and tire contact patch","cut to interior through rain-covered side window","cut to wide low angle as car pulls ahead"],
-  aatmo:["wet asphalt reflections ripple as car passes","orange street lights bleed across glossy paint","rain droplets streak across the lens","red brake glow bleeds into puddles","fog curls around the bumper and wheels","tunnel lights blur into streaks overhead","exhaust vapour rises slowly in cold air","motion blur streaks the background","wet tire spray fans off rear wheels","headlights cut sharp beams through darkness"],
-  aspeed:["slow and cinematic, almost still","gradual gentle movement","medium pace, controlled","urgent and fast","aggressive high speed"]
+  amove:[
+    "camera pushes forward chasing the car",
+    "camera tracks alongside at matching speed",
+    "camera creeps forward from behind toward the car",
+    "camera starts tight on rear wheel then pulls back to reveal full car",
+    "camera rises slowly from ground level to mid shot",
+    "camera drifts alongside the door panel toward the front",
+    "camera pushes in tight on the grille then pulls back wide",
+    "camera slides low along front bumper then tilts up to roofline",
+    "camera tracks tight on exhaust tips then pulls back",
+    "camera pushes forward along wet road surface toward the car",
+    "camera slowly circles from low angle",
+    "camera creeps through rain-covered windshield of chase car"
+  ],
+  acut:[
+    "cut to tight close-up of spinning wheel and brake caliper",
+    "cut to driver silhouette barely visible through tinted glass",
+    "cut to rear diffuser and exhaust tips at speed",
+    "cut to wide shot revealing the full scene",
+    "cut to extreme close-up of rain droplets on glossy paint",
+    "cut to front grille and headlights cutting through atmosphere",
+    "cut to road surface and tire contact patch",
+    "cut to interior through rain-covered side window",
+    "cut to wide low angle as car pulls ahead"
+  ],
+  aatmo:[
+    "wet asphalt reflections ripple as car passes",
+    "orange street lights bleed across glossy paint",
+    "rain droplets streak across the lens",
+    "red brake glow bleeds into puddles",
+    "fog curls around the bumper and wheels",
+    "tunnel lights blur into streaks overhead",
+    "exhaust vapour rises slowly in cold air",
+    "motion blur streaks the background",
+    "wet tire spray fans off rear wheels",
+    "headlights cut sharp beams through darkness"
+  ],
+  aspeed:[
+    "slow and cinematic, almost still",
+    "gradual gentle movement",
+    "medium pace, controlled",
+    "urgent and fast",
+    "aggressive high speed"
+  ]
 };
 
-const state={car:null,count:null,finish:null,scene:null,angle:null,mood:null,detail:null,weather:null,time:null};
+const state={car:null,count:null,finish:null,scene:null,angle:null,driver:null,mood:null,detail:null,weather:null,time:null};
 const astate={amove:null,acut:null,aatmo:null,aspeed:null};
-let lastGenerated={car:'',count:'',finish:'',scene:'',weather:'',time:''};
+let lastGenerated={car:'',count:'',finish:'',scene:'',weather:'',time:'',driver:''};
 
 function goStep(n){
   [1,2,3].forEach(i=>{
@@ -298,7 +325,7 @@ function goStep(n){
 function updateKlingHeader(){
   const el=document.getElementById('current-settings');
   if(lastGenerated.car){
-    el.innerHTML=`<span>Car:</span> ${lastGenerated.car} &nbsp;·&nbsp; <span>Count:</span> ${lastGenerated.count} &nbsp;·&nbsp; <span>Scene:</span> ${lastGenerated.scene} &nbsp;·&nbsp; <span>Weather:</span> ${lastGenerated.weather} &nbsp;·&nbsp; <span>Time:</span> ${lastGenerated.time}`;
+    el.innerHTML=`<span>Car:</span> ${lastGenerated.car} &nbsp;·&nbsp; <span>Count:</span> ${lastGenerated.count} &nbsp;·&nbsp; <span>Scene:</span> ${lastGenerated.scene} &nbsp;·&nbsp; <span>Driver:</span> ${lastGenerated.driver}`;
   }
 }
 
@@ -322,7 +349,7 @@ function updateCount(){
 }
 
 function updateRealismLabel(){
-  const v=parseInt(document.getElementById('realism-slider').value);
+  const v=parseInt(document.getElementById('realism-slider').value,10);
   document.getElementById('realism-label').textContent=REALISM[v].label;
 }
 
@@ -332,11 +359,13 @@ function initMJ(){
   makeChips('finish-chips','finish',DATA.finish,state);
   makeChips('scene-chips','scene',DATA.scene,state);
   makeChips('angle-chips','angle',DATA.angle,state);
+  makeChips('driver-chips','driver',DATA.driver,state);
   makeChips('mood-chips','mood',DATA.mood,state);
   makeChips('detail-chips','detail',DATA.detail,state);
   makeChips('weather-chips','weather',DATA.weather,state);
   makeChips('time-chips','time',DATA.time,state);
   updateCount();
+  updateRealismLabel();
 }
 
 function initAnimate(){
@@ -352,43 +381,40 @@ function clearAKey(k){astate[k]=null;initAnimate();}
 
 function randomize(){
   Object.keys(state).forEach(k=>{state[k]=pick(DATA[k]);});
-  initMJ();generateMJ();
+  initMJ();
+  generateMJ();
 }
 
 function arandomize(){
   Object.keys(astate).forEach(k=>{astate[k]=pick(ANIMATE[k]);});
-  initAnimate();agenerate();
+  initAnimate();
+  agenerate();
 }
 
-function weightedAngle(angle){
-  const rearHeavy=[
-    "rear dead-center tracking shot",
-    "low trailing angle from behind",
-    "rear three-quarter low angle",
-    "high rear three-quarter angle",
-    "direct rear view from another moving car",
-    "rear view with taillights dominating the frame",
-    "worm's eye rear angle from pavement"
-  ];
-  return rearHeavy.includes(angle)?`${angle}::1.5`:`${angle}::1.15`;
-}
-
-function carCountText(count,car){
+function carCountText(count, car){
   if(count==="1 car"){
     return `one heavily modified ${car}, isolated hero subject`;
   }
   if(count==="2 cars"){
-    return `two heavily modified ${car}s rolling together in the same direction, staggered formation, clear spacing between both cars`;
+    return `two heavily modified ${car}s rolling in the same direction, staggered formation, both vehicles clearly readable`;
   }
-  return `three heavily modified ${car}s rolling together in convoy formation, same direction, cinematic spacing, the lead car remains the hero subject`;
+  return `three heavily modified ${car}s rolling in convoy formation, same direction, realistic spacing, lead vehicle dominant`;
 }
 
-function angleCompositionText(count,angle){
+function angleCompositionText(count, angle){
   if(count==="1 car") return angle;
-  if(count==="2 cars"){
-    return `${angle}, both cars clearly visible, no overlap hiding the second car`;
+  if(count==="2 cars") return `${angle}, both cars clearly visible, no heavy overlap`;
+  return `${angle}, all three cars visible in frame, cinematic depth layering, lead car dominant`;
+}
+
+function driverText(mode){
+  if(mode==="driver not visible behind very dark tinted glass"){
+    return `the driver is not visible at all behind very dark tinted glass`;
   }
-  return `${angle}, all three cars readable in frame, cinematic depth layering, lead car dominant`;
+  if(mode==="driver barely visible through deeply tinted windshield"){
+    return `behind the deeply tinted windshield, only a barely discernible realistic dark silhouette of the driver is visible`;
+  }
+  return `a photorealistic driver is visible through the side window, realistic face proportions, natural posture, believable hands, no distorted anatomy`;
 }
 
 function generateMJ(){
@@ -397,23 +423,17 @@ function generateMJ(){
   const finish=state.finish||pick(DATA.finish);
   const scene=state.scene||pick(DATA.scene);
   const angle=state.angle||pick(DATA.angle);
+  const driver=state.driver||pick(DATA.driver);
   const mood=state.mood||pick(DATA.mood);
   const detail=state.detail||pick(DATA.detail);
   const weather=state.weather||pick(DATA.weather);
   const time=state.time||pick(DATA.time);
-  const rv=parseInt(document.getElementById('realism-slider').value);
+  const rv=parseInt(document.getElementById('realism-slider').value,10);
   const camera=REALISM[rv].tags;
 
-  lastGenerated={car,count,finish,scene,weather,time};
+  lastGenerated={car,count,finish,scene,weather,time,driver};
 
-  const subjectBlock = `${camera}::1.35`;
-  const carsBlock = `${carCountText(count, `${finish} ${car}`)}::1.5`;
-  const sceneBlock = `${scene}, ${time}, ${weather}::1.2`;
-  const angleBlock = `${angleCompositionText(count, weightedAngle(angle))}, rear view emphasis if possible::1.35`;
-  const detailBlock = `${detail}, no license plate, bracket area completely blacked out, deeply tinted windshield, barely discernible dark silhouette of driver, environment and architecture reflected across the car body::1.15`;
-  const moodBlock = `${mood} atmosphere::1.1`;
-
-  const prompt = `${subjectBlock} ${carsBlock} ${sceneBlock} ${angleBlock} ${detailBlock} ${moodBlock} --ar 9:16 --raw --stylize 0`;
+  const prompt = `${camera}, vertical automotive photo. ${carCountText(count, `${finish} ${car}`)} on a ${scene} at ${time}, ${weather}. ${angleCompositionText(count, angle)}. ${driverText(driver)}. ${detail}. No license plate, bracket area completely blacked out. Real glass reflections, realistic asphalt texture, authentic paint reflections, believable shadows, natural contrast, unedited RAW photo look, no CGI, no illustration, no game render. ${mood} atmosphere. taillights, road reflections, realistic body proportions, true automotive photography, highly believable real-world photo. --ar 9:16 --raw --stylize 0 --v 7`;
 
   document.getElementById('mj-text').textContent=prompt;
   document.getElementById('mj-out').style.display='block';
@@ -426,8 +446,10 @@ function agenerate(){
   const cut=astate.acut||pick(ANIMATE.acut);
   const atmo=astate.aatmo||pick(ANIMATE.aatmo);
   const speed=astate.aspeed||pick(ANIMATE.aspeed);
-  const context=lastGenerated.car?` The car in the photo is a ${lastGenerated.finish||''} ${lastGenerated.car} on a ${lastGenerated.scene}.`:'';
-  const prompt=`${move}.${context} Movement is ${speed}. ${atmo}. ${cut}. Car moves forward at all times. No reverse motion. Camera always follows the subject — never pulls away.`;
+  const context=lastGenerated.car
+    ? ` The vehicle in the photo is a ${lastGenerated.finish||''} ${lastGenerated.car} in ${lastGenerated.scene}. Driver visibility: ${lastGenerated.driver}.`
+    : '';
+  const prompt=`${move}.${context} Movement is ${speed}. ${atmo}. ${cut}. Car moves forward at all times. No reverse motion. Camera always follows the subject. Maintain realistic automotive footage and natural momentum.`;
   document.getElementById('animate-text').textContent=prompt;
   document.getElementById('animate-out').style.display='block';
   document.getElementById('animate-copied').textContent='';
@@ -440,14 +462,18 @@ function copyText(id,fid){
     setTimeout(()=>{document.getElementById(fid).textContent='';},2000);
   }).catch(()=>{
     const ta=document.createElement('textarea');
-    ta.value=text;document.body.appendChild(ta);ta.select();
-    document.execCommand('copy');document.body.removeChild(ta);
+    ta.value=text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
     document.getElementById(fid).textContent='Copied ✓';
     setTimeout(()=>{document.getElementById(fid).textContent='';},2000);
   });
 }
 
-initMJ();initAnimate();
+initMJ();
+initAnimate();
 </script>
 </body>
 </html>
